@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------------------
+# Nexora Destination — API reverse proxy (TEMPLATE — review before use)
+#
+#   api.YOUR_DOMAIN  ->  Nginx  ->  127.0.0.1:5050 (PM2: nexora-api)
+#
+# Install:
+#   1. Inspect what already exists:  ls /etc/nginx/sites-enabled/ ; nginx -T
+#      Do not overwrite or edit other sites' server blocks.
+#   2. Copy to /etc/nginx/sites-available/nexora-api.conf, replace YOUR_DOMAIN.
+#   3. ln -s ../sites-available/nexora-api.conf /etc/nginx/sites-enabled/
+#   4. nginx -t && systemctl reload nginx
+#   5. certbot --nginx -d api.YOUR_DOMAIN   (adds the 443 block + redirect)
+# ---------------------------------------------------------------------------
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.YOUR_DOMAIN;
+
+    # The API accepts 32 kb bodies; reject anything much larger at the edge.
+    client_max_body_size 64k;
+
+    # The API is JSON-only; nothing here should be cached by intermediaries.
+    add_header Cache-Control "no-store" always;
+
+    location / {
+        proxy_pass http://127.0.0.1:5050;
+        proxy_http_version 1.1;
+
+        # Express runs with `trust proxy` = 1 in production and relies on this
+        # single hop to see the real client IP for rate limiting.
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 10s;
+        proxy_read_timeout    30s;
+    }
+}

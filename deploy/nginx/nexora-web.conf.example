@@ -1,0 +1,36 @@
+# ---------------------------------------------------------------------------
+# Nexora Destination — website reverse proxy (TEMPLATE — review before use)
+#
+#   YOUR_DOMAIN, www.YOUR_DOMAIN  ->  Nginx  ->  127.0.0.1:3000 (PM2: nexora-web)
+#
+# Same install steps as nexora-api.conf.example. After certbot, uncomment the
+# HSTS header in the generated 443 block once HTTPS is confirmed working.
+# ---------------------------------------------------------------------------
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name YOUR_DOMAIN www.YOUR_DOMAIN;
+
+    client_max_body_size 1m;
+
+    # Long-lived caching for Next.js's fingerprinted build assets.
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        "upgrade";
+    }
+
+    # In the certbot-generated 443 server block, once HTTPS works:
+    # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+}
