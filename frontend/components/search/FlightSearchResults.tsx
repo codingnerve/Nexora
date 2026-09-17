@@ -168,9 +168,19 @@ export function FlightSearchResults({
                 {/* Airline & Aircraft Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-[10px] bg-sand-200/80 text-ink-900 font-extrabold text-[0.8125rem]">
-                      {flight.airlineCode}
-                    </div>
+                    {flight.airlineLogo ? (
+                      <div className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-sand-300 bg-white p-1">
+                        <img
+                          src={flight.airlineLogo}
+                          alt={flight.airline}
+                          className="size-full object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-sand-200/80 text-ink-900 font-extrabold text-[0.8125rem]">
+                        {flight.airlineCode}
+                      </div>
+                    )}
                     <div>
                       <h4 className="font-display text-[0.9375rem] font-bold text-ink-900">
                         {flight.airline}
@@ -232,6 +242,13 @@ export function FlightSearchResults({
                 {flight.returnLeg ? (
                   <div className="mt-4 border-t border-sand-200/80 pt-4">
                     <div className="flex items-center gap-2 mb-2 text-[0.75rem] font-bold uppercase tracking-wider text-clay-700">
+                      {flight.returnLeg.airlineLogo ? (
+                        <img
+                          src={flight.returnLeg.airlineLogo}
+                          alt={flight.returnLeg.airline}
+                          className="size-3.5 object-contain"
+                        />
+                      ) : null}
                       <span>Return Flight</span>
                       <span className="text-stone-400">•</span>
                       <span className="font-normal text-stone-600">
@@ -276,7 +293,8 @@ export function FlightSearchResults({
                     Total per person
                   </span>
                   <p className="nx-figures font-display text-[1.75rem] font-extrabold text-ink-900">
-                    ${flight.price}
+                    {flight.currency === "EUR" ? "€" : flight.currency === "GBP" ? "£" : "$"}
+                    {flight.price}
                   </p>
                   <span className="inline-flex items-center gap-1 text-[0.75rem] font-medium text-emerald-700">
                     <CheckCircle2 className="size-3" />
