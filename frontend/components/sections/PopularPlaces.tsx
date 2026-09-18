@@ -10,6 +10,7 @@ import {
   airportLabel,
   cityLabel,
   flightLabel,
+  guideHref,
   type PlaceGroup,
   type PopularCity,
 } from "@/data/popularPlaces";
@@ -88,12 +89,26 @@ function CityLinks({ service, city, group }: { service: Service; city: PopularCi
     );
   }
 
+  const guide = guideHref(city);
+  const name = (
+    <>
+      {city.name}
+      <span className="ml-2 text-[0.8125rem] font-bold tracking-[0.06em] text-stone-500">{city.airportCode}</span>
+    </>
+  );
+
   return (
     <div className="flex min-h-11 items-center justify-between gap-3 border-t border-line py-1.5">
-      <span className="text-body-md font-semibold text-ink-900">
-        {city.name}
-        <span className="ml-2 text-[0.8125rem] font-bold tracking-[0.06em] text-stone-500">{city.airportCode}</span>
-      </span>
+      {guide ? (
+        <Link
+          href={guide}
+          className="text-body-md font-semibold text-ink-900 underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:text-clay-700 hover:decoration-clay-500"
+        >
+          {name}
+        </Link>
+      ) : (
+        <span className="text-body-md font-semibold text-ink-900">{name}</span>
+      )}
       <span className="flex shrink-0 gap-1">
         {(Object.keys(SERVICE_META) as SearchService[]).map((key) => {
           const { label, icon: Icon } = SERVICE_META[key];

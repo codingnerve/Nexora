@@ -286,6 +286,194 @@ export const DESTINATION_GALLERY = {
 } as const satisfies Record<keyof typeof DESTINATION_PHOTOS, EditorialPhoto>;
 
 /* ---------------------------------------------------------------------------
+ * US and European city guides — a lead photograph and a second view of each,
+ * keyed by destination slug. Viewed and checked like every entry above.
+ * ------------------------------------------------------------------------- */
+
+export const CITY_PHOTOS = {
+  "los-angeles": {
+    lead: {
+      src: unsplash("1597982087634-9884f03198ce"),
+      alt: "A road lined with tall palm trees leading towards the Los Angeles skyline at golden hour.",
+    },
+    gallery: {
+      src: unsplash("1505887280198-1301ee2128af"),
+      alt: "Santa Monica Pier and its fairground rides reaching out over the beach, seen from above.",
+    },
+  },
+  "san-francisco": {
+    lead: {
+      src: unsplash("1450149632596-3ef25a62011a"),
+      alt: "The Golden Gate Bridge across the bay at sunset, with waves breaking on the rocks in front.",
+    },
+    gallery: {
+      src: unsplash("1562697445-84178bc6ea06"),
+      alt: "Two San Francisco cable cars on a steep street lined with shops and pedestrians.",
+    },
+  },
+  miami: {
+    lead: {
+      src: unsplash("1589083130544-0d6a2926e519"),
+      alt: "An aerial view of Miami Beach, with hotels and apartments along a long strip of sand and turquoise sea.",
+    },
+    gallery: {
+      src: unsplash("1692403435670-c1894e770ecd"),
+      alt: "Pastel Art Deco hotel fronts behind palm trees on a sunny Miami Beach street.",
+    },
+  },
+  orlando: {
+    lead: {
+      src: unsplash("1738683010297-375809e327b3"),
+      alt: "Lake Eola and its fountain in front of the downtown Orlando skyline on a clear day.",
+    },
+    gallery: {
+      src: unsplash("1558403972-5b2654cd2235"),
+      alt: "Kayakers paddling along a clear, tree-lined Florida spring run.",
+    },
+  },
+  boston: {
+    lead: {
+      src: unsplash("1565127803082-69dd82351360"),
+      alt: "The Boston skyline across the Charles River, with small sailing boats on the water.",
+    },
+    gallery: {
+      src: unsplash("1726347921807-8551a19aefaf"),
+      alt: "A swan boat on the lagoon in the Boston Public Garden beneath willow trees and office towers.",
+    },
+  },
+  seattle: {
+    lead: {
+      src: unsplash("1502175353174-a7a70e73b362"),
+      alt: "The Space Needle and the Seattle skyline, with snow-capped Mount Rainier in the distance.",
+    },
+    gallery: {
+      src: unsplash("1531335773500-23410807365a"),
+      alt: "The Seattle waterfront and its Ferris wheel seen across Elliott Bay.",
+    },
+  },
+  honolulu: {
+    lead: {
+      src: unsplash("1507876466758-bc54f384809c"),
+      alt: "Waikiki Beach curving towards Diamond Head, with hotels along the shore in Honolulu.",
+    },
+    gallery: {
+      src: unsplash("1651346907013-f65ca68a93c7"),
+      alt: "A green volcanic headland above a curving bay and coral reef on the coast of Oahu.",
+    },
+  },
+  "jersey-city-newark": {
+    lead: {
+      src: unsplash("1720924221584-1ca94be7181f"),
+      alt: "The Jersey City waterfront towers seen across the Hudson River.",
+    },
+    gallery: {
+      src: unsplash("1618491720119-3db4dca7d997"),
+      alt: "A twin-towered Gothic cathedral in Newark behind trees in spring blossom.",
+    },
+  },
+  "las-vegas": {
+    lead: {
+      src: unsplash("1668261929011-4ade8c225292"),
+      alt: "The Las Vegas Strip lit up at night, with a fountain show on the lake in front of the hotels.",
+    },
+    gallery: {
+      src: unsplash("1516325759459-7251ff998ab8"),
+      alt: "Red sandstone cliffs rising above the desert at Red Rock Canyon, outside Las Vegas, at dusk.",
+    },
+  },
+  chicago: {
+    lead: {
+      src: unsplash("1714662660476-022bfd34cf44"),
+      alt: "The Chicago skyline rising along the Lake Michigan shoreline at dusk.",
+    },
+    gallery: {
+      src: unsplash("1578579351670-1969cf6eaf0a"),
+      alt: "A tour boat on the Chicago River between downtown towers and bridges.",
+    },
+  },
+  rome: {
+    lead: {
+      src: unsplash("1552832230-c0197dd311b5"),
+      alt: "The Colosseum in Rome at dusk, its lower arches lit from within.",
+    },
+    gallery: {
+      src: unsplash("1708628934823-a37e3fe0bb4e"),
+      alt: "A cobbled, ivy-covered lane in Rome at night, with café tables under a lamp.",
+    },
+  },
+  venice: {
+    lead: {
+      src: unsplash("1514890547357-a9ee288728e0"),
+      alt: "The Grand Canal in Venice, with the domes of Santa Maria della Salute at the end.",
+    },
+    gallery: {
+      src: unsplash("1574530638414-88578d1f73a2"),
+      alt: "A gondola carrying passengers past colourful palazzi on a Venetian canal.",
+    },
+  },
+  milan: {
+    lead: {
+      src: unsplash("1572602648934-1d98de6dab48"),
+      alt: "Milan Cathedral's white marble spires above the busy Piazza del Duomo.",
+    },
+    gallery: {
+      src: unsplash("1621947502614-2ccd0fdd0c20"),
+      alt: "The arched entrance of the Galleria Vittorio Emanuele II in Milan.",
+    },
+  },
+  barcelona: {
+    lead: {
+      src: unsplash("1650964827770-421afa7960ac"),
+      alt: "The towers of the Sagrada Família in Barcelona, seen through the trees of a nearby square.",
+    },
+    gallery: {
+      src: unsplash("1688680436936-0175962af721"),
+      alt: "A mosaic-tiled bench at Park Güell looking out over Barcelona towards the sea.",
+    },
+  },
+  madrid: {
+    lead: {
+      src: unsplash("1725112675082-5fc786ea4269"),
+      alt: "Madrid's domed Metrópolis building at the start of the Gran Vía, seen from above.",
+    },
+    gallery: {
+      src: unsplash("1658922184767-d5335cb2a9d2"),
+      alt: "The equestrian statue and red arcaded buildings of the Plaza Mayor in Madrid.",
+    },
+  },
+  nice: {
+    lead: {
+      src: unsplash("1643914729809-4aa59fdc4c17"),
+      alt: "The Baie des Anges curving along the Nice seafront, with the old town's rooftops below.",
+    },
+    gallery: {
+      src: unsplash("1694725330422-64ed85b9f26e"),
+      alt: "The palm-lined seafront promenade and pebble beach in Nice, seen from above.",
+    },
+  },
+  edinburgh: {
+    lead: {
+      src: unsplash("1535448033526-c0e85c9e6968"),
+      alt: "Edinburgh Castle on its volcanic rock above green slopes.",
+    },
+    gallery: {
+      src: unsplash("1595599014147-a419c147bdc0"),
+      alt: "The Dugald Stewart Monument on Calton Hill overlooking the Edinburgh skyline in warm evening light.",
+    },
+  },
+  manchester: {
+    lead: {
+      src: unsplash("1692968678752-3f24021a188e"),
+      alt: "Victorian rooftops in central Manchester with modern towers rising behind them.",
+    },
+    gallery: {
+      src: unsplash("1577310528320-fb74a8d5a99e"),
+      alt: "The Gothic clock tower of Manchester Town Hall against a clear blue sky.",
+    },
+  },
+} as const satisfies Record<string, { lead: EditorialPhoto; gallery: EditorialPhoto }>;
+
+/* ---------------------------------------------------------------------------
  * Backwards-compatible aliases used by metadata and older sections
  * ------------------------------------------------------------------------- */
 

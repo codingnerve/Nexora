@@ -225,12 +225,12 @@ export default function CabsPage() {
             <NumberedList items={CAB_PLAN_AHEAD} columns={1} />
             <p className="mt-6 text-body-md text-foreground-muted">
               Heading somewhere with a long airport transfer? Our guides to{" "}
-              <Link href="/destinations/bali" className="font-semibold text-ink-900 underline decoration-clay-500 underline-offset-4 hover:text-clay-700">
-                Bali
+              <Link href="/destinations/los-angeles" className="font-semibold text-ink-900 underline decoration-clay-500 underline-offset-4 hover:text-clay-700">
+                Los Angeles
               </Link>{" "}
               and{" "}
-              <Link href="/destinations/maldives" className="font-semibold text-ink-900 underline decoration-clay-500 underline-offset-4 hover:text-clay-700">
-                the Maldives
+              <Link href="/destinations/orlando" className="font-semibold text-ink-900 underline decoration-clay-500 underline-offset-4 hover:text-clay-700">
+                Orlando
               </Link>{" "}
               explain how travellers usually get around.
             </p>

@@ -1,12 +1,14 @@
 import { DESTINATION_GALLERY, DESTINATION_PHOTOS, type EditorialPhoto } from "@/lib/images";
 import type { ImageRatio } from "@/components/ui/EditorialImage";
+import { EUROPE_GUIDES, US_GUIDES } from "@/data/cityGuides";
 
 /**
  * Destination content.
  *
  * One record per destination drives the homepage mosaic, the /destinations
  * index and the /destinations/[slug] pages — there is no per-destination page
- * markup anywhere.
+ * markup anywhere. The US and European city guides live in `cityGuides.ts`
+ * and are merged in at the bottom of this file.
  *
  * Content rules applied throughout this file:
  *   - no prices, ratings, review counts or availability
@@ -380,11 +382,41 @@ const GUIDES: Record<string, DestinationGuide> = {
   },
 };
 
-export const DESTINATIONS: readonly Destination[] = BASE.map((destination) => {
+const ORIGINAL: readonly Destination[] = BASE.map((destination) => {
   const guide = GUIDES[destination.slug];
   if (!guide) throw new Error(`Missing guide content for "${destination.slug}"`);
   return { ...destination, ...guide };
 });
+
+export type DestinationRegion = "usa" | "europe" | "asia";
+
+export const REGION_LABELS: Record<DestinationRegion, string> = {
+  usa: "United States",
+  europe: "Europe",
+  asia: "Middle East & Asia",
+};
+
+const EUROPEAN_COUNTRIES = new Set(["United Kingdom", "France", "Italy", "Spain"]);
+
+export function regionOf(destination: Pick<Destination, "country">): DestinationRegion {
+  if (destination.country === "United States") return "usa";
+  return EUROPEAN_COUNTRIES.has(destination.country) ? "europe" : "asia";
+}
+
+const REGION_ORDER: readonly DestinationRegion[] = ["usa", "europe", "asia"];
+
+/**
+ * Every destination, the United States first — the market the business
+ * focuses on — then Europe, then the rest. Order within a region is kept.
+ */
+export const DESTINATIONS: readonly Destination[] = [...ORIGINAL, ...US_GUIDES, ...EUROPE_GUIDES]
+  .map((destination, index) => ({ destination, index }))
+  .sort(
+    (a, b) =>
+      REGION_ORDER.indexOf(regionOf(a.destination)) - REGION_ORDER.indexOf(regionOf(b.destination)) ||
+      a.index - b.index
+  )
+  .map(({ destination }) => destination);
 
 /** Looks up a destination by its URL slug. */
 export function getDestination(slug: string): Destination | undefined {

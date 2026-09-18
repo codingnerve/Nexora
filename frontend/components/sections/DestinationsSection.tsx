@@ -11,14 +11,14 @@ import { cn } from "@/utils/cn";
 /**
  * Destinations mosaic.
  *
- * Desktop: Dubai as one large feature, the Maldives and Bali as two medium tiles beside
+ * Desktop: New York as one large feature, Los Angeles and Miami as two medium tiles beside
  * it, then the remaining five as a row of smaller portrait tiles.
- * Phones: Dubai first at 4:3, then a compact two-column grid — the last tile
+ * Phones: New York first at 4:3, then a compact two-column grid — the last tile
  * widens so the grid always ends on a full row.
  */
 
-const FEATURE_SLUGS = ["dubai", "maldives", "bali"] as const;
-const ROW_SLUGS = ["singapore", "bangkok", "london", "paris", "new-york"] as const;
+const FEATURE_SLUGS = ["new-york", "los-angeles", "miami"] as const;
+const ROW_SLUGS = ["las-vegas", "honolulu", "london", "paris", "rome"] as const;
 
 function pick(slugs: readonly string[]): Destination[] {
   return slugs

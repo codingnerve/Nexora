@@ -39,10 +39,10 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const STAY_GUIDES = [
-  { label: "Dubai", href: "/destinations/dubai" },
-  { label: "Bali", href: "/destinations/bali" },
-  { label: "Singapore", href: "/destinations/singapore" },
-  { label: "Paris", href: "/destinations/paris" },
+  { label: "Los Angeles", href: "/destinations/los-angeles" },
+  { label: "Miami", href: "/destinations/miami" },
+  { label: "Las Vegas", href: "/destinations/las-vegas" },
+  { label: "Rome", href: "/destinations/rome" },
 ] as const;
 
 export default function HotelsPage() {

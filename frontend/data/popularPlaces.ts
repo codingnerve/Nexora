@@ -119,6 +119,37 @@ export const EUROPE_PLACES: readonly PlaceGroup[] = [
   },
 ];
 
+/** The destination guide for each city, where there is one. */
+const GUIDE_SLUGS: Record<string, string> = {
+  "Los Angeles": "los-angeles",
+  "San Francisco": "san-francisco",
+  "New York City": "new-york",
+  Miami: "miami",
+  Orlando: "orlando",
+  Boston: "boston",
+  Seattle: "seattle",
+  Honolulu: "honolulu",
+  Newark: "jersey-city-newark",
+  "Jersey City": "jersey-city-newark",
+  "Las Vegas": "las-vegas",
+  Chicago: "chicago",
+  Paris: "paris",
+  Nice: "nice",
+  Rome: "rome",
+  Milan: "milan",
+  Venice: "venice",
+  Madrid: "madrid",
+  Barcelona: "barcelona",
+  London: "london",
+  Manchester: "manchester",
+  Edinburgh: "edinburgh",
+};
+
+export const guideHref = (city: PopularCity): string | undefined => {
+  const slug = GUIDE_SLUGS[city.name];
+  return slug ? `/destinations/${slug}` : undefined;
+};
+
 /** Every city, US first — used for autocomplete suggestions. */
 export const POPULAR_CITIES: readonly (PopularCity & { readonly region: string; readonly country: string })[] =
   [...US_PLACES, ...EUROPE_PLACES].flatMap((group) =>

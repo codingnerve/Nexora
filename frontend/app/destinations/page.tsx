@@ -11,7 +11,14 @@ import { ServiceStrip } from "@/components/sections/ServiceStrip";
 import { Reveal } from "@/components/shared/Reveal";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { DESTINATIONS, getDestination, type Destination } from "@/data/destinations";
+import {
+  DESTINATIONS,
+  REGION_LABELS,
+  getDestination,
+  regionOf,
+  type Destination,
+  type DestinationRegion,
+} from "@/data/destinations";
 import { PLAN_TRIP_HREF } from "@/lib/constants";
 import { TRIP_PHOTOS } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
@@ -27,31 +34,33 @@ import { cn } from "@/utils/cn";
 export const metadata: Metadata = buildMetadata({
   title: "Destinations",
   description:
-    "Travel guides to Dubai, the Maldives, Bali, Singapore, Bangkok, London, Paris and New York — where to stay, getting around and when to go — with personal help planning flights, hotels and transfers.",
+    "Travel guides to New York, Los Angeles, Miami, Las Vegas and more US cities, plus London, Paris, Rome, Barcelona and beyond — where to stay, getting around and when to go — with personal help planning flights, hotels and transfers.",
   path: "/destinations",
   image: TRIP_PHOTOS.beachPalms.src,
 });
 
-/**
- * Editorial grid rows. Column spans on a 12-column grid from `lg`, with a fixed
- * row height so tiles in the same row line up regardless of their width.
- */
-const ROWS: readonly { slugs: readonly string[]; spans: readonly string[]; height: string }[] = [
-  { slugs: ["dubai", "bali"], spans: ["lg:col-span-7", "lg:col-span-5"], height: "lg:h-[26rem]" },
-  { slugs: ["maldives", "singapore", "bangkok"], spans: ["lg:col-span-4", "lg:col-span-4", "lg:col-span-4"], height: "lg:h-[19rem]" },
-  { slugs: ["london", "paris", "new-york"], spans: ["lg:col-span-5", "lg:col-span-3", "lg:col-span-4"], height: "lg:h-[19rem]" },
+/** The editorial grid, one block per region — United States first. */
+const REGIONS: readonly { region: DestinationRegion; lede: string }[] = [
+  { region: "usa", lede: "Coast to coast, from New York to Honolulu." },
+  { region: "europe", lede: "France, Italy, Spain and the United Kingdom." },
+  { region: "asia", lede: "Island resorts, city stopovers and long-haul favourites." },
 ];
 
 const STARTING_POINTS: readonly { title: string; body: string; slugs: readonly string[] }[] = [
   {
     title: "Beaches and islands",
     body: "Slower days, resort stays and transfers worth arranging in advance.",
-    slugs: ["maldives", "bali"],
+    slugs: ["honolulu", "miami", "nice", "maldives", "bali"],
   },
   {
     title: "City breaks",
     body: "Walkable neighbourhoods, museums, food and good public transport.",
-    slugs: ["london", "paris", "new-york", "singapore"],
+    slugs: ["new-york", "chicago", "boston", "london", "paris", "rome", "barcelona"],
+  },
+  {
+    title: "Family trips",
+    body: "Theme parks, beaches and plenty to fill the days with children.",
+    slugs: ["orlando", "los-angeles", "san-francisco", "honolulu"],
   },
   {
     title: "Stopovers on longer routes",
@@ -148,30 +157,30 @@ export default function DestinationsPage() {
         </Reveal>
 
         {/* --- Editorial grid --------------------------------------------- */}
-        <div className="mt-12 space-y-12 lg:mt-16 lg:space-y-16">
-          {ROWS.map((row) => (
-            <Reveal key={row.slugs.join("-")}>
-              <ul className="grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-6">
-                {row.slugs.map((slug, index) => {
-                  const destination = getDestination(slug);
-                  if (!destination) return null;
-                  return (
+        <div className="mt-12 space-y-16 lg:mt-16 lg:space-y-20">
+          {REGIONS.map(({ region, lede }) => {
+            const destinations = DESTINATIONS.filter((destination) => regionOf(destination) === region);
+            return (
+              <Reveal key={region}>
+                <div className="flex flex-col gap-1 border-b border-line pb-5 sm:flex-row sm:items-baseline sm:justify-between">
+                  <h2 className="text-[1.75rem] font-extrabold tracking-[-0.025em] text-ink-900">
+                    {REGION_LABELS[region]}
+                  </h2>
+                  <p className="text-body-md text-foreground-muted">{lede}</p>
+                </div>
+                <ul className="mt-8 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-6">
+                  {destinations.map((destination) => (
                     <DestinationEntry
-                      key={slug}
+                      key={destination.slug}
                       destination={destination}
-                      className={cn(
-                        // An odd count on the two-column tablet grid: widen the last.
-                        row.slugs.length === 3 && index === 2 && "sm:col-span-2",
-                        row.spans[index]
-                      )}
-                      imageClassName={cn(row.height, row.slugs.length === 3 && index === 2 && "sm:aspect-[16/7] lg:aspect-auto")}
-                      sizes="(min-width: 1024px) 50vw, (min-width: 640px) 50vw, 100vw"
+                      imageClassName="lg:h-[17rem]"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     />
-                  );
-                })}
-              </ul>
-            </Reveal>
-          ))}
+                  ))}
+                </ul>
+              </Reveal>
+            );
+          })}
         </div>
       </Section>
 
@@ -187,7 +196,7 @@ export default function DestinationsPage() {
           />
         </Reveal>
         <Reveal className="mt-12">
-          <ul className="grid gap-10 md:grid-cols-3 md:gap-8">
+          <ul className="grid gap-10 md:grid-cols-2 md:gap-8 xl:grid-cols-4">
             {STARTING_POINTS.map((group) => (
               <li key={group.title} className="border-t border-white/15 pt-6">
                 <h3 className="text-[1.25rem] font-bold tracking-[-0.015em] text-white">{group.title}</h3>

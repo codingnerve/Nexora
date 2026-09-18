@@ -39,10 +39,10 @@ export const metadata: Metadata = buildMetadata({
 const AREA_ICONS = [MapPin, Globe2, Repeat, MoveRight] as const;
 
 const ROUTE_IDEAS = [
-  { label: "Dubai", href: "/destinations/dubai" },
-  { label: "Singapore", href: "/destinations/singapore" },
-  { label: "London", href: "/destinations/london" },
   { label: "New York", href: "/destinations/new-york" },
+  { label: "Los Angeles", href: "/destinations/los-angeles" },
+  { label: "London", href: "/destinations/london" },
+  { label: "Barcelona", href: "/destinations/barcelona" },
 ] as const;
 
 export default function FlightsPage() {
