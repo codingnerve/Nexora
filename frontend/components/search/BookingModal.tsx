@@ -7,6 +7,7 @@ import { CheckCircle2, Loader2, Plane, Hotel, Car, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+import { CONTACT, toTelHref } from "@/lib/constants";
 import type { FlightOffer } from "@/lib/flightsApi";
 import type { HotelOffer } from "@/lib/hotelsApi";
 import type { CabOffer } from "@/lib/cabsApi";
@@ -188,6 +189,17 @@ export function BookingModal({ data, onClose }: BookingModalProps) {
               We have sent an acknowledgement to <strong>{email}</strong>. Our
               travel specialist is reviewing availability and will contact you directly to confirm your reservation.
             </p>
+            {CONTACT.tollFree ? (
+              <p className="mt-3 text-body-sm text-stone-600">
+                Need immediate help? Call toll-free:{" "}
+                <a
+                  href={toTelHref(CONTACT.tollFree)}
+                  className="font-semibold text-clay-700 underline underline-offset-4 hover:text-clay-800"
+                >
+                  {CONTACT.tollFree}
+                </a>
+              </p>
+            ) : null}
             <div className="mt-6">
               <Button variant="primary" size="md" onClick={onClose}>
                 Done

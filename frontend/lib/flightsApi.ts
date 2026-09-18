@@ -1,15 +1,13 @@
 /**
  * Flight Search API Client & Engine.
  *
- * Integrated with the Flyventures Flight Search API:
- * - Development: http://localhost:5000/api
- * - Production: https://api.flyventures.co/api
+ * Supports:
+ * - Duffel API v2 (Direct via DUFFEL_ACCESS_TOKEN & DUFFEL_API_URL: https://api.duffel.com)
+ * - Nexora Backend (http://localhost:5050/api/flights/search)
+ * - Flyventures Live Flight Search API (http://localhost:5000/api / https://api.flyventures.co/api)
  *
- * Calls POST /api/flights/search with:
- *   { origin, destination, departDate, returnDate, cabin, adults, children, infants }
- *
- * When NEXT_PUBLIC_FLIGHT_API_URL is configured (or NEXT_PUBLIC_FLIGHT_API_KEY),
- * it queries the live backend. Falls back gracefully to verified schedules if offline.
+ * When credentials or live APIs are unavailable, falls back gracefully to
+ * high-fidelity verified schedules for instant interaction.
  */
 
 export interface FlightSearchParams {
@@ -107,7 +105,7 @@ export function formatIsoTime(isoStr?: string): string {
 }
 
 /**
- * Transforms an offer from the Flyventures Live Flight Search API into the Nexora FlightOffer model.
+ * Transforms an offer from Duffel API or Flyventures Live Flight Search API into the Nexora FlightOffer model.
  */
 export function transformFlyventuresOffer(offer: any, params: FlightSearchParams): FlightOffer {
   const slices = offer.slices || [];
@@ -118,7 +116,11 @@ export function transformFlyventuresOffer(offer: any, params: FlightSearchParams
 
   const stops = Math.max(0, outboundSegments.length - 1);
   const layoverCities = outboundSegments.length > 1
-    ? outboundSegments.slice(0, -1).map((s: any) => s.destination || s.destinationName).filter(Boolean).join(", ")
+    ? outboundSegments
+        .slice(0, -1)
+        .map((s: any) => s.destinationName || s.destination?.city_name || s.destination?.name || s.destination?.iata_code || s.destination)
+        .filter(Boolean)
+        .join(", ")
     : "";
 
   let returnLeg: FlightLeg | undefined;
@@ -129,112 +131,204 @@ export function transformFlyventuresOffer(offer: any, params: FlightSearchParams
     const retLastSeg = retSegments[retSegments.length - 1] || retFirstSeg;
     const retStops = Math.max(0, retSegments.length - 1);
     const retLayoverCities = retSegments.length > 1
-      ? retSegments.slice(0, -1).map((s: any) => s.destination || s.destinationName).filter(Boolean).join(", ")
+      ? retSegments
+          .slice(0, -1)
+          .map((s: any) => s.destinationName || s.destination?.city_name || s.destination?.name || s.destination?.iata_code || s.destination)
+          .filter(Boolean)
+          .join(", ")
       : "";
 
+    const retCarrier = retFirstSeg.marketing_carrier || retFirstSeg.operating_carrier || retFirstSeg.carrier || {};
+    const retAirlineName = offer.owner?.name || retCarrier.name || "Airline";
+    const retAirlineCode = offer.owner?.code || offer.owner?.iata_code || retCarrier.code || retCarrier.iata_code || "FL";
+    const retAirlineLogo = offer.owner?.logoUrl || offer.owner?.logo_symbol_url || retCarrier.logoUrl || retCarrier.logo_symbol_url || null;
+
+    const retFlightNum =
+      retFirstSeg.flightNumber ||
+      (retFirstSeg.marketing_carrier_flight_number ? `${retAirlineCode} ${retFirstSeg.marketing_carrier_flight_number}` : null) ||
+      (retFirstSeg.operating_carrier_flight_number ? `${retAirlineCode} ${retFirstSeg.operating_carrier_flight_number}` : null) ||
+      `${retAirlineCode} 202`;
+
     returnLeg = {
-      airline: offer.owner?.name || retFirstSeg.carrier?.name || "Airline",
-      airlineCode: offer.owner?.code || retFirstSeg.carrier?.code || "FL",
-      airlineLogo: offer.owner?.logoUrl || retFirstSeg.carrier?.logoUrl || null,
-      flightNumber: retFirstSeg.flightNumber || `${retFirstSeg.carrier?.code || "FL"} 202`,
-      aircraft: retFirstSeg.aircraft || "Airbus A320neo",
-      departureTime: formatIsoTime(retFirstSeg.departingAt),
-      arrivalTime: formatIsoTime(retLastSeg.arrivingAt),
-      departureAirport: retSlice.origin || retFirstSeg.origin || params.to.toUpperCase(),
-      arrivalAirport: retSlice.destination || retLastSeg.destination || params.from.toUpperCase(),
-      departureAirportName: retSlice.originName || retFirstSeg.originName,
-      arrivalAirportName: retSlice.destinationName || retLastSeg.destinationName,
+      airline: retAirlineName,
+      airlineCode: retAirlineCode,
+      airlineLogo: retAirlineLogo,
+      flightNumber: retFlightNum,
+      aircraft: retFirstSeg.aircraft?.name || retFirstSeg.aircraft || "Airbus A320neo",
+      departureTime: formatIsoTime(retFirstSeg.departingAt || retFirstSeg.departing_at),
+      arrivalTime: formatIsoTime(retLastSeg.arrivingAt || retLastSeg.arriving_at),
+      departureAirport: retSlice.origin?.iata_code || retSlice.origin || retFirstSeg.origin?.iata_code || retFirstSeg.origin || params.to.toUpperCase(),
+      arrivalAirport: retSlice.destination?.iata_code || retSlice.destination || retLastSeg.destination?.iata_code || retLastSeg.destination || params.from.toUpperCase(),
+      departureAirportName: retSlice.originName || retSlice.origin?.name || retFirstSeg.originName || retFirstSeg.origin?.name,
+      arrivalAirportName: retSlice.destinationName || retSlice.destination?.name || retLastSeg.destinationName || retLastSeg.destination?.name,
       duration: formatFlightDuration(retSlice.duration || retFirstSeg.duration),
       stops: retStops,
       stopDetails: retStops === 0 ? undefined : `${retStops} stop${retStops > 1 ? "s" : ""} in ${retLayoverCities || "connecting airport"}`,
     };
   }
 
-  const airlineName = offer.owner?.name || firstSeg.carrier?.name || "Partner Airline";
-  const airlineCode = offer.owner?.code || firstSeg.carrier?.code || "FL";
-  const airlineLogo = offer.owner?.logoUrl || firstSeg.carrier?.logoUrl || null;
+  const carrier = firstSeg.marketing_carrier || firstSeg.operating_carrier || firstSeg.carrier || {};
+  const airlineName = offer.owner?.name || carrier.name || "Partner Airline";
+  const airlineCode = offer.owner?.code || offer.owner?.iata_code || carrier.code || carrier.iata_code || "FL";
+  const airlineLogo = offer.owner?.logoUrl || offer.owner?.logo_symbol_url || carrier.logoUrl || carrier.logo_symbol_url || null;
+
+  const flightNumber =
+    firstSeg.flightNumber ||
+    (firstSeg.marketing_carrier_flight_number ? `${airlineCode} ${firstSeg.marketing_carrier_flight_number}` : null) ||
+    (firstSeg.operating_carrier_flight_number ? `${airlineCode} ${firstSeg.operating_carrier_flight_number}` : null) ||
+    `${airlineCode} 1014`;
+
+  const totalRaw = offer.totalAmount ?? offer.total_amount ?? offer.baseAmount ?? offer.base_amount ?? 150;
+  const baseRaw = offer.baseAmount ?? offer.base_amount;
+  const taxRaw = offer.taxAmount ?? offer.tax_amount;
 
   return {
     id: String(offer.id || `off-${Math.random().toString(36).substring(2, 9)}`),
     airline: airlineName,
     airlineCode: airlineCode,
     airlineLogo: airlineLogo,
-    flightNumber: firstSeg.flightNumber || `${airlineCode} 1014`,
-    aircraft: firstSeg.aircraft || "Airbus A320neo",
-    departureTime: formatIsoTime(firstSeg.departingAt),
-    arrivalTime: formatIsoTime(lastSeg.arrivingAt),
-    departureAirport: outboundSlice.origin || firstSeg.origin || params.from.toUpperCase(),
-    arrivalAirport: outboundSlice.destination || lastSeg.destination || params.to.toUpperCase(),
-    departureAirportName: outboundSlice.originName || firstSeg.originName,
-    arrivalAirportName: outboundSlice.destinationName || lastSeg.destinationName,
+    flightNumber: flightNumber,
+    aircraft: firstSeg.aircraft?.name || firstSeg.aircraft || "Airbus A320neo",
+    departureTime: formatIsoTime(firstSeg.departingAt || firstSeg.departing_at),
+    arrivalTime: formatIsoTime(lastSeg.arrivingAt || lastSeg.arriving_at),
+    departureAirport: outboundSlice.origin?.iata_code || outboundSlice.origin || firstSeg.origin?.iata_code || firstSeg.origin || params.from.toUpperCase(),
+    arrivalAirport: outboundSlice.destination?.iata_code || outboundSlice.destination || lastSeg.destination?.iata_code || lastSeg.destination || params.to.toUpperCase(),
+    departureAirportName: outboundSlice.originName || outboundSlice.origin?.name || firstSeg.originName || firstSeg.origin?.name,
+    arrivalAirportName: outboundSlice.destinationName || outboundSlice.destination?.name || lastSeg.destinationName || lastSeg.destination?.name,
     duration: formatFlightDuration(outboundSlice.duration || firstSeg.duration),
     stops: stops,
     stopDetails: stops === 0 ? undefined : `${stops} stop${stops > 1 ? "s" : ""} in ${layoverCities || "connecting airport"}`,
-    price: Math.round(Number(offer.totalAmount ?? offer.baseAmount ?? 150)),
-    basePrice: offer.baseAmount ? Math.round(Number(offer.baseAmount)) : undefined,
-    taxPrice: offer.taxAmount ? Math.round(Number(offer.taxAmount)) : undefined,
-    currency: offer.currency || "USD",
+    price: Math.round(Number(totalRaw)),
+    basePrice: baseRaw ? Math.round(Number(baseRaw)) : undefined,
+    taxPrice: taxRaw ? Math.round(Number(taxRaw)) : undefined,
+    currency: offer.currency || offer.total_currency || "USD",
     cabinClass: params.cabinClass,
-    baggage: outboundSlice.fareBrand
-      ? `${outboundSlice.fareBrand} fare (Checked baggage included)`
+    baggage: outboundSlice.fareBrand || outboundSlice.fare_brand_name
+      ? `${outboundSlice.fareBrand || outboundSlice.fare_brand_name} fare (Checked baggage included)`
       : "Included (1 Cabin + 1 Checked Bag)",
     seatsLeft: 4,
     refundable: true,
     returnLeg,
-    expiresAt: offer.expiresAt,
+    expiresAt: offer.expiresAt || offer.expires_at,
   };
 }
 
 /**
  * Executes a flight search.
- * Connects to live Flyventures API when configured, or returns realistic offers for instant interaction.
+ * Connects to live Duffel API or backend search API when configured,
+ * or returns high-fidelity fallback offers for seamless testing.
  */
 export async function searchFlights(
   params: FlightSearchParams
 ): Promise<FlightOffer[]> {
-  const flightApiUrl = process.env.NEXT_PUBLIC_FLIGHT_API_URL;
-  const apiKey = process.env.NEXT_PUBLIC_FLIGHT_API_KEY || process.env.FLIGHT_API_KEY;
+  const duffelToken =
+    process.env.NEXT_PUBLIC_DUFFEL_ACCESS_TOKEN ||
+    process.env.DUFFEL_ACCESS_TOKEN;
+  const duffelApiUrl =
+    process.env.NEXT_PUBLIC_DUFFEL_API_URL ||
+    process.env.DUFFEL_API_URL ||
+    "https://api.duffel.com";
+
+  const flightApiUrl =
+    process.env.NEXT_PUBLIC_FLIGHT_API_URL ||
+    (duffelToken ? duffelApiUrl : undefined);
+
+  const apiKey =
+    process.env.NEXT_PUBLIC_FLIGHT_API_KEY ||
+    process.env.FLIGHT_API_KEY ||
+    duffelToken;
 
   // ---------------------------------------------------------------------------
-  // 1. LIVE FLIGHT SEARCH API (Flyventures Backend)
+  // 1. LIVE FLIGHT SEARCH (Duffel Direct or Backend Proxy)
   // ---------------------------------------------------------------------------
   if (flightApiUrl) {
     try {
       const cleanBase = flightApiUrl.replace(/\/$/, "");
-      const endpoint = cleanBase.endsWith("/flights/search")
-        ? cleanBase
-        : cleanBase.endsWith("/flights")
-          ? `${cleanBase}/search`
-          : `${cleanBase}/flights/search`;
+      const isDirectDuffel = cleanBase.includes("duffel.com");
 
       const originCode = (params.from || "MAD").toUpperCase().trim().slice(0, 3);
       const destCode = (params.to || "BCN").toUpperCase().trim().slice(0, 3);
+      const cabinClass = (params.cabinClass || "economy").toLowerCase();
+      const adults = Math.max(1, Math.min(9, Number(params.adults) || 1));
+      const children = Math.max(0, Math.min(8, Number(params.children) || 0));
+      const infants = Math.max(0, Math.min(8, Number(params.infants) || 0));
 
-      const payload: Record<string, any> = {
-        origin: originCode,
-        destination: destCode,
-        departDate: params.departureDate,
-        cabin: params.cabinClass ? params.cabinClass.toLowerCase() : "economy",
-        adults: Math.max(1, Math.min(9, Number(params.adults) || 1)),
-        children: Math.max(0, Math.min(8, Number(params.children) || 0)),
-        infants: Math.max(0, Math.min(8, Number(params.infants) || 0)),
-      };
+      let endpoint: string;
+      let headers: Record<string, string> = { "Content-Type": "application/json" };
+      let body: string;
 
-      if (params.tripType === "ROUND_TRIP" && params.returnDate) {
-        payload.returnDate = params.returnDate;
-      }
+      if (isDirectDuffel) {
+        // Direct Duffel v2 air offer_requests API
+        endpoint = cleanBase.endsWith("/air")
+          ? `${cleanBase}/offer_requests?return_offers=true`
+          : `${cleanBase}/air/offer_requests?return_offers=true`;
 
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (apiKey) {
-        headers["Authorization"] = `Bearer ${apiKey}`;
+        if (apiKey) {
+          headers["Authorization"] = `Bearer ${apiKey}`;
+        }
+        headers["Duffel-Version"] = "v2";
+        headers["Accept"] = "application/json";
+
+        const slices = [
+          {
+            origin: originCode,
+            destination: destCode,
+            departure_date: params.departureDate,
+          },
+        ];
+        if (params.tripType === "ROUND_TRIP" && params.returnDate) {
+          slices.push({
+            origin: destCode,
+            destination: originCode,
+            departure_date: params.returnDate,
+          });
+        }
+
+        const passengers: Array<{ type?: string; age?: number }> = [];
+        for (let i = 0; i < adults; i++) passengers.push({ type: "adult" });
+        for (let i = 0; i < children; i++) passengers.push({ age: 8 });
+        for (let i = 0; i < infants; i++) passengers.push({ type: "infant_without_seat" });
+
+        body = JSON.stringify({
+          data: {
+            slices,
+            passengers,
+            cabin_class: cabinClass,
+          },
+        });
+      } else {
+        // Nexora / Flyventures live backend API (/flights/search)
+        endpoint = cleanBase.endsWith("/flights/search")
+          ? cleanBase
+          : cleanBase.endsWith("/flights")
+            ? `${cleanBase}/search`
+            : `${cleanBase}/flights/search`;
+
+        if (apiKey) {
+          headers["Authorization"] = `Bearer ${apiKey}`;
+        }
+
+        const payload: Record<string, any> = {
+          origin: originCode,
+          destination: destCode,
+          departDate: params.departureDate,
+          cabin: cabinClass,
+          adults,
+          children,
+          infants,
+        };
+
+        if (params.tripType === "ROUND_TRIP" && params.returnDate) {
+          payload.returnDate = params.returnDate;
+        }
+
+        body = JSON.stringify(payload);
       }
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers,
-        body: JSON.stringify(payload),
+        body,
       });
 
       if (response.ok) {
@@ -245,7 +339,7 @@ export async function searchFlights(
         }
       } else {
         const errorData = await response.json().catch(() => null);
-        console.warn("Live Flight API error:", response.status, errorData);
+        console.warn("Live Flight API response not ok:", response.status, errorData);
       }
     } catch (err) {
       console.warn("Could not reach live flight search API, falling back to verified schedules:", err);
@@ -330,17 +424,44 @@ export async function searchFlights(
  * Looks up a single flight offer by its ID.
  */
 export async function getFlightOffer(id: string): Promise<FlightOffer | null> {
-  const flightApiUrl = process.env.NEXT_PUBLIC_FLIGHT_API_URL;
+  const duffelToken =
+    process.env.NEXT_PUBLIC_DUFFEL_ACCESS_TOKEN ||
+    process.env.DUFFEL_ACCESS_TOKEN;
+  const duffelApiUrl =
+    process.env.NEXT_PUBLIC_DUFFEL_API_URL ||
+    process.env.DUFFEL_API_URL ||
+    "https://api.duffel.com";
+
+  const flightApiUrl =
+    process.env.NEXT_PUBLIC_FLIGHT_API_URL ||
+    (duffelToken ? duffelApiUrl : undefined);
+
   if (!flightApiUrl) return null;
 
   try {
     const cleanBase = flightApiUrl.replace(/\/$/, "");
-    const endpoint = cleanBase.endsWith("/flights")
-      ? `${cleanBase}/offers/${encodeURIComponent(id)}`
-      : `${cleanBase}/flights/offers/${encodeURIComponent(id)}`;
+    const isDirectDuffel = cleanBase.includes("duffel.com");
 
-    const apiKey = process.env.NEXT_PUBLIC_FLIGHT_API_KEY || process.env.FLIGHT_API_KEY;
+    const apiKey =
+      process.env.NEXT_PUBLIC_FLIGHT_API_KEY ||
+      process.env.FLIGHT_API_KEY ||
+      duffelToken;
+
+    let endpoint: string;
     const headers: Record<string, string> = { "Content-Type": "application/json" };
+
+    if (isDirectDuffel) {
+      endpoint = cleanBase.endsWith("/air")
+        ? `${cleanBase}/offers/${encodeURIComponent(id)}`
+        : `${cleanBase}/air/offers/${encodeURIComponent(id)}`;
+      headers["Duffel-Version"] = "v2";
+      headers["Accept"] = "application/json";
+    } else {
+      endpoint = cleanBase.endsWith("/flights")
+        ? `${cleanBase}/offers/${encodeURIComponent(id)}`
+        : `${cleanBase}/flights/offers/${encodeURIComponent(id)}`;
+    }
+
     if (apiKey) {
       headers["Authorization"] = `Bearer ${apiKey}`;
     }
@@ -351,8 +472,8 @@ export async function getFlightOffer(id: string): Promise<FlightOffer | null> {
       const offer = json?.data;
       if (offer) {
         return transformFlyventuresOffer(offer, {
-          from: offer.slices?.[0]?.origin || "MAD",
-          to: offer.slices?.[0]?.destination || "BCN",
+          from: offer.slices?.[0]?.origin?.iata_code || offer.slices?.[0]?.origin || "MAD",
+          to: offer.slices?.[0]?.destination?.iata_code || offer.slices?.[0]?.destination || "BCN",
           departureDate: "",
           tripType: offer.slices?.length > 1 ? "ROUND_TRIP" : "ONE_WAY",
           adults: 1,

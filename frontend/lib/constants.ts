@@ -38,9 +38,9 @@ const readEnv = (value: string | undefined): string => {
 };
 
 export const CONTACT = {
-  /** Display form, e.g. "1800 000 0000". Empty when not yet configured. */
-  tollFree: readEnv(process.env.NEXT_PUBLIC_TOLL_FREE_NUMBER),
-  email: readEnv(process.env.NEXT_PUBLIC_CONTACT_EMAIL),
+  /** Display form, e.g. "(888) 673-5008". */
+  tollFree: readEnv(process.env.NEXT_PUBLIC_TOLL_FREE_NUMBER) || "(888) 673-5008",
+  email: readEnv(process.env.NEXT_PUBLIC_CONTACT_EMAIL) || "support@nexoradestinations.com",
   address: readEnv(process.env.NEXT_PUBLIC_COMPANY_ADDRESS),
   hours: readEnv(process.env.NEXT_PUBLIC_SUPPORT_HOURS),
   /** International format with country code, e.g. "+971 50 123 4567". */

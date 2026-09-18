@@ -52,13 +52,18 @@ const envSchema = z.object({
 
   /* --- Where new inquiries are sent ------------------------------------- */
   AGENT_EMAIL: z.email("AGENT_EMAIL must be a valid email").optional(),
-  AGENT_PHONE_NUMBER: z.string().trim().optional(),
+  AGENT_PHONE_NUMBER: z.string().trim().default("(888) 673-5008"),
 
   /** Set to "false" to skip sending email entirely (useful in tests). */
   EMAIL_ENABLED: z
     .enum(["true", "false"])
     .default("true")
     .transform((value) => value === "true"),
+
+  /* --- Duffel Flight Search API ----------------------------------------- */
+  DUFFEL_ACCESS_TOKEN: z.string().trim().optional(),
+  DUFFEL_API_URL: z.string().trim().default("https://api.duffel.com"),
+  DUFFEL_VERSION: z.string().trim().default("v2"),
 });
 
 const parsed = envSchema.safeParse(presentEnv);
@@ -98,6 +103,7 @@ export const env = {
   ...raw,
   allowedOrigins,
   canSendEmail,
+  isDuffelConfigured: Boolean(raw.DUFFEL_ACCESS_TOKEN),
   isProduction: raw.NODE_ENV === "production",
   isDevelopment: raw.NODE_ENV === "development",
   isTest: raw.NODE_ENV === "test",
