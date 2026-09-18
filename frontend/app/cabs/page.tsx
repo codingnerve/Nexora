@@ -18,6 +18,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { NumberedList } from "@/components/sections/NumberedList";
+import { PopularPlaces } from "@/components/sections/PopularPlaces";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { SplitFeature } from "@/components/sections/SplitFeature";
 import { Reveal } from "@/components/shared/Reveal";
@@ -77,6 +78,8 @@ export default function CabsPage() {
           </InquiryCard>
         </Reveal>
       </Section>
+
+      <PopularPlaces service="cabs" tone="muted" className="border-t border-line" />
 
       {/* --- Transportation types ----------------------------------------- */}
       <SplitFeature image={CAB_PHOTOS.driverDusk} ratio="tall">

@@ -8,6 +8,7 @@ import { DestinationsSection } from "@/components/sections/DestinationsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { FullBleedBand } from "@/components/sections/FullBleedBand";
 import { Hero } from "@/components/sections/Hero";
+import { PopularPlaces } from "@/components/sections/PopularPlaces";
 import { ProcessSteps } from "@/components/sections/ProcessSteps";
 import { ServiceStrip } from "@/components/sections/ServiceStrip";
 import { SplitFeature } from "@/components/sections/SplitFeature";
@@ -83,6 +84,8 @@ export default function HomePage() {
         steps={PROCESS_STEPS}
         note="Nexora does not offer instant online booking or take payment on this website. Every booking is completed manually, only once you've agreed to it."
       />
+
+      <PopularPlaces service="all" />
 
       <DestinationsSection />
 

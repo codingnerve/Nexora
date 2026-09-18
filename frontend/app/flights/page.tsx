@@ -9,6 +9,7 @@ import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { FullBleedBand } from "@/components/sections/FullBleedBand";
 import { NumberedList } from "@/components/sections/NumberedList";
+import { PopularPlaces } from "@/components/sections/PopularPlaces";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { SplitFeature } from "@/components/sections/SplitFeature";
 import { Reveal } from "@/components/shared/Reveal";
@@ -68,6 +69,8 @@ export default function FlightsPage() {
           </InquiryCard>
         </Reveal>
       </Section>
+
+      <PopularPlaces service="flights" tone="canvas" className="border-t border-line" />
 
       {/* --- What we help with -------------------------------------------- */}
       <SplitFeature image={FLIGHT_PHOTOS.cabin} inset={FLIGHT_PHOTOS.landing} tone="muted" ratio="tall">

@@ -9,6 +9,7 @@ import { FaqAccordion } from "@/components/sections/FaqAccordion";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { FullBleedBand } from "@/components/sections/FullBleedBand";
 import { NumberedList } from "@/components/sections/NumberedList";
+import { PopularPlaces } from "@/components/sections/PopularPlaces";
 import { PhotoCardGrid } from "@/components/sections/PhotoCardGrid";
 import { ServiceHero } from "@/components/sections/ServiceHero";
 import { SplitFeature } from "@/components/sections/SplitFeature";
@@ -71,6 +72,8 @@ export default function HotelsPage() {
           </InquiryCard>
         </Reveal>
       </Section>
+
+      <PopularPlaces service="hotels" tone="canvas" className="border-t border-line" />
 
       <PhotoCardGrid
         eyebrow="Types of stay"

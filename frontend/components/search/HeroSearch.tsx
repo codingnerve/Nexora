@@ -7,6 +7,7 @@ import { useCallback, useId, useRef, useState, type FormEvent, type ReactNode } 
 import { Button } from "@/components/ui/Button";
 import { addDaysISO, todayISO } from "@/components/ui/DateInput";
 import { controlClassName } from "@/components/ui/FormField";
+import { POPULAR_CITIES, airportLabel, cityLabel } from "@/data/popularPlaces";
 import { POPULAR_AIRPORTS } from "@/lib/airports";
 import { CABIN_CLASSES } from "@/lib/constants";
 import {
@@ -42,6 +43,14 @@ const TABS: { id: SearchService; label: string; icon: ReactNode }[] = [
 
 const range = (from: number, to: number) =>
   Array.from({ length: to - from + 1 }, (_, i) => from + i);
+
+/** Cab pickup / drop-off suggestions: each popular city's airport, then the city itself. */
+const CAB_PLACES = [
+  ...new Set([
+    ...POPULAR_CITIES.map((city) => airportLabel(city)),
+    ...POPULAR_CITIES.map((city) => cityLabel(city, city)),
+  ]),
+];
 
 const CONTROL = cn(controlClassName(false), "h-12 text-[0.9375rem]");
 
@@ -331,11 +340,18 @@ export function HeroSearch({
         <div role="tabpanel" id={id("panel-hotels")} aria-labelledby={id("tab-hotels")} hidden={active !== "hotels"}>
           {active === "hotels" ? (
             <form onSubmit={go(hotel)}>
+              <datalist id={id("cities")}>
+                {POPULAR_CITIES.map((city) => (
+                  <option key={`${city.name}-${city.region}`} value={cityLabel(city, city)} />
+                ))}
+              </datalist>
+
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-[2fr_1fr_1fr_0.7fr_0.7fr_auto] lg:items-end">
                 <Field label="Destination" htmlFor={id("destination")} className="col-span-2 lg:col-span-1">
                   <input
                     id={id("destination")}
                     required
+                    list={id("cities")}
                     maxLength={MAX_LENGTH.place}
                     autoComplete="off"
                     placeholder="City, area or hotel name"
@@ -406,11 +422,18 @@ export function HeroSearch({
         <div role="tabpanel" id={id("panel-cabs")} aria-labelledby={id("tab-cabs")} hidden={active !== "cabs"}>
           {active === "cabs" ? (
             <form onSubmit={go(cab)}>
+              <datalist id={id("cab-places")}>
+                {CAB_PLACES.map((place) => (
+                  <option key={place} value={place} />
+                ))}
+              </datalist>
+
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-[1.5fr_1.5fr_1fr_0.8fr_0.7fr_auto] lg:items-end">
                 <Field label="Pickup" htmlFor={id("pickup")} className="col-span-2 sm:col-span-1 lg:col-span-1">
                   <input
                     id={id("pickup")}
                     required
+                    list={id("cab-places")}
                     maxLength={MAX_LENGTH.address}
                     autoComplete="off"
                     placeholder="Airport, hotel or address"
@@ -423,6 +446,7 @@ export function HeroSearch({
                   <input
                     id={id("dropoff")}
                     required
+                    list={id("cab-places")}
                     maxLength={MAX_LENGTH.address}
                     autoComplete="off"
                     placeholder="Where you need to get to"
