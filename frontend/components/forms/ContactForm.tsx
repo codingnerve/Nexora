@@ -2,7 +2,7 @@
 
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
@@ -62,7 +62,24 @@ const INITIAL: ContactFormValues = {
   companyWebsite: "",
 };
 
-export function ContactForm() {
+interface ContactFormProps {
+  /**
+   * Short variant for embedding outside the contact page: drops the topic and
+   * subject fields, leaving name, email, phone and message.
+   */
+  condensed?: boolean;
+  /**
+   * When set, the thank-you page leads with a "call us now" prompt. Used by the
+   * site-wide enquiry band, whose visitors are likely to want a quick answer.
+   */
+  offerCall?: boolean;
+}
+
+export function ContactForm({
+  condensed = false,
+  offerCall = false,
+}: ContactFormProps) {
+  const honeypotId = useId();
   const [values, setValues] = useState<ContactFormValues>(INITIAL);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "error" | "success">(
@@ -131,7 +148,11 @@ export function ContactForm() {
 
         const created = await submitInquiry("general", payload);
         setStatus("success");
-        router.push(`/thank-you?inquiry=${encodeURIComponent(created.inquiryId)}`);
+        router.push(
+          `/thank-you?inquiry=${encodeURIComponent(created.inquiryId)}${
+            offerCall ? "&call=1" : ""
+          }`
+        );
       } catch (error) {
         if (error instanceof ApiError) {
           setMessage(error.message);
@@ -147,7 +168,7 @@ export function ContactForm() {
         inFlight.current = false;
       }
     },
-    [values, router]
+    [values, router, offerCall]
   );
 
   if (status === "success") {
@@ -191,32 +212,36 @@ export function ContactForm() {
           onChange={(combined) => setField("phone", combined)}
         />
 
-        <Select
-          label="What's it about?"
-          value={values.service}
-          options={SERVICE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
-          onChange={(event) =>
-            setField("service", event.target.value as ServiceValue)
-          }
-        />
+        {condensed ? null : (
+          <>
+            <Select
+              label="What's it about?"
+              value={values.service}
+              options={SERVICE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+              onChange={(event) =>
+                setField("service", event.target.value as ServiceValue)
+              }
+            />
 
-        <FieldFull>
-          <Input
-            label="Subject"
-            placeholder="A short summary"
-            maxLength={MAX_LENGTH.subject}
-            autoComplete="off"
-            value={values.subject}
-            error={errors.subject}
-            onChange={(event) => setField("subject", event.target.value)}
-          />
-        </FieldFull>
+            <FieldFull>
+              <Input
+                label="Subject"
+                placeholder="A short summary"
+                maxLength={MAX_LENGTH.subject}
+                autoComplete="off"
+                value={values.subject}
+                error={errors.subject}
+                onChange={(event) => setField("subject", event.target.value)}
+              />
+            </FieldFull>
+          </>
+        )}
 
         {/* Honeypot: hidden from people, out of the tab order. */}
         <div aria-hidden="true" className="hidden">
-          <label htmlFor={`contact-${HONEYPOT_FIELD}`}>Company website</label>
+          <label htmlFor={`${honeypotId}-${HONEYPOT_FIELD}`}>Company website</label>
           <input
-            id={`contact-${HONEYPOT_FIELD}`}
+            id={`${honeypotId}-${HONEYPOT_FIELD}`}
             name={HONEYPOT_FIELD}
             type="text"
             tabIndex={-1}
@@ -230,7 +255,7 @@ export function ContactForm() {
           <Textarea
             label="How can we help?"
             required
-            rows={5}
+            rows={condensed ? 3 : 5}
             maxLength={MAX_LENGTH.message}
             placeholder="Tell us about the trip, the dates, or the question you have."
             value={values.message}

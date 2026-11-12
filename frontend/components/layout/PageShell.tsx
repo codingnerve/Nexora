@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { EnquiryBand } from "@/components/sections/EnquiryBand";
 import {
   MobileCallBar,
   MobileCallBarSpacer,
@@ -16,7 +17,17 @@ import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
  * the call bar, and so the spacer that keeps the call bar off the page's last
  * element is never forgotten.
  */
-export function PageShell({ children }: { children: ReactNode }) {
+export function PageShell({
+  children,
+  enquiry = true,
+}: {
+  children: ReactNode;
+  /**
+   * Show the enquiry form above the footer. Pages that already are a form, or
+   * a confirmation after one, turn it off.
+   */
+  enquiry?: boolean;
+}) {
   return (
     <>
       <a
@@ -30,6 +41,7 @@ export function PageShell({ children }: { children: ReactNode }) {
 
       <main id="main">
         {children}
+        {enquiry ? <EnquiryBand /> : null}
         <MobileCallBarSpacer />
       </main>
 

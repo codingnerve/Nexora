@@ -50,6 +50,10 @@ async function Confirmation({
     ? (SERVICE_FOR_PREFIX[reference.split("-")[1] ?? ""] ?? null)
     : null;
 
+  // Set by the site-wide enquiry form. Only an exact "1" counts, and the prompt
+  // needs a configured number to be worth showing.
+  const offerCall = params.call === "1" && IS_TOLL_FREE_CONFIGURED;
+
   return (
     <Section tone="muted" space="lg">
       <div className="mx-auto max-w-2xl rounded-[20px] border border-sand-300 bg-white p-7 text-center shadow-panel sm:p-12">
@@ -97,12 +101,32 @@ async function Confirmation({
           </p>
         )}
 
+        {offerCall ? (
+          <div className="mx-auto mt-8 max-w-md rounded-[16px] bg-ink-900 p-6 text-canvas-100">
+            <p className="font-display text-display-sm">Need an answer sooner?</p>
+            <p className="mt-2 text-body-sm text-white/80">
+              Call us now and a travel specialist can help straight away.
+            </p>
+            <ButtonLink
+              href={toTelHref(CONTACT.tollFree)}
+              variant="accent"
+              size="lg"
+              iconLeft={<Phone />}
+              fullWidthOnMobile
+              className="mt-5"
+              aria-label={`Call now: ${CONTACT.tollFree}`}
+            >
+              Call {CONTACT.tollFree}
+            </ButtonLink>
+          </div>
+        ) : null}
+
         <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row sm:items-center">
           <ButtonLink href="/" variant="primary" size="lg" iconLeft={<ArrowLeft />} fullWidthOnMobile>
             Back to Homepage
           </ButtonLink>
 
-          {IS_TOLL_FREE_CONFIGURED ? (
+          {IS_TOLL_FREE_CONFIGURED && !offerCall ? (
             <ButtonLink
               href={toTelHref(CONTACT.tollFree)}
               variant="phone"
@@ -126,7 +150,7 @@ export default function ThankYouPage({
   searchParams,
 }: PageProps<"/thank-you">) {
   return (
-    <PageShell>
+    <PageShell enquiry={false}>
       {/* `searchParams` makes this route dynamic; the fallback keeps the shell
           visible while it resolves. */}
       <Suspense fallback={<Section tone="muted" space="lg">{null}</Section>}>

@@ -75,7 +75,7 @@ export default function ContactPage() {
   ].filter((channel): channel is NonNullable<typeof channel> => channel !== null);
 
   return (
-    <PageShell>
+    <PageShell enquiry={false}>
       {/* --- Hero ---------------------------------------------------------- */}
       <section aria-labelledby="contact-heading" className="overflow-hidden bg-canvas-200">
         <Container className="grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-16 lg:py-20">
