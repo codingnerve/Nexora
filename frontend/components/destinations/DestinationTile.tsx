@@ -46,7 +46,7 @@ export function DestinationTile({
       {/* Image overlay: the one place gradients are used. */}
       <span
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/85 via-ink-950/25 to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/64 via-ink-950/14 to-transparent"
       />
 
       <span

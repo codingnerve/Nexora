@@ -136,7 +136,7 @@ function Card({
       />
       <span
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/85 via-ink-950/30 to-ink-950/0"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/64 via-ink-950/18 to-ink-950/0"
       />
 
       <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-6">

@@ -48,7 +48,7 @@ export function ImageBand({
             />
             <div
               aria-hidden="true"
-              className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950/90 via-ink-950/55 to-ink-950/5"
+              className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950/68 via-ink-950/34 to-ink-950/5"
             />
 
             <div className="flex min-h-[clamp(26rem,58vh,34rem)] flex-col justify-center px-6 py-14 sm:px-12 lg:px-20">

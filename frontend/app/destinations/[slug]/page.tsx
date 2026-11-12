@@ -169,7 +169,7 @@ export default async function DestinationPage(props: PageProps<"/destinations/[s
             />
             <div
               aria-hidden="true"
-              className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/90 via-ink-950/40 to-ink-950/5"
+              className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/68 via-ink-950/24 to-ink-950/5"
             />
 
             <div className="flex min-h-[clamp(28rem,68vh,40rem)] flex-col justify-end px-6 pb-10 pt-24 sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">

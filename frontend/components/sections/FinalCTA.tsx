@@ -43,7 +43,7 @@ export function FinalCTA({
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-900/60"
+            className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950/80 via-ink-950/55 to-ink-900/30"
           />
         </>
       ) : null}

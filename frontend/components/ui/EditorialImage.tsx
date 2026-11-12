@@ -96,7 +96,7 @@ export function EditorialImage({
       {scrim ? (
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-ink-950/15 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-ink-950/52 via-ink-950/10 to-transparent"
         />
       ) : null}
 

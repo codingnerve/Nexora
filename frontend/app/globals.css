@@ -9,7 +9,7 @@
    not normally need to change.
 
    Palette intent:
-     ink      deep navy #10233F       — primary, headings, dark sections
+     ink      navy #1D4073       — primary, headings, dark sections
      canvas   warm white / soft sand  — page and section backgrounds
      clay     coral #E76F51           — CTAs, active states, rules
      amber    golden sand #E8B86D     — secondary accent on dark surfaces
@@ -19,22 +19,22 @@
 
 :root {
   /* --- Primitives: ink (deep navy) -------------------------------------- */
-  --nx-ink-950: #0b1a30;
-  --nx-ink-900: #10233f;
-  --nx-ink-800: #1a3358;
-  --nx-ink-700: #274470;
-  --nx-ink-600: #3a5a88;
-  --nx-ink-500: #5271a0;
+  --nx-ink-950: #163562;
+  --nx-ink-900: #1d4073;
+  --nx-ink-800: #2a5189;
+  --nx-ink-700: #3764a1;
+  --nx-ink-600: #4b7bb6;
+  --nx-ink-500: #6b94c5;
 
-  /* --- Primitives: canvas (warm white / soft sand surfaces) ------------- */
+  /* --- Primitives: canvas (bright white / soft sand surfaces) ----------- */
   --nx-canvas-50: #ffffff;
-  --nx-canvas-100: #fafaf7;
-  --nx-canvas-200: #f2eee6;
+  --nx-canvas-100: #fdfcfa;
+  --nx-canvas-200: #f8f5ef;
 
   /* --- Primitives: sand (tinted surfaces and lines) --------------------- */
-  --nx-sand-200: #f2eee6;
-  --nx-sand-300: #e5e7eb;
-  --nx-sand-400: #d0d5dd;
+  --nx-sand-200: #f8f5ef;
+  --nx-sand-300: #e8eaee;
+  --nx-sand-400: #d5dae1;
 
   /* --- Primitives: clay (coral / terracotta accent) ----------------------
      500 is the brand coral, used for fills, rules and active markers. White

@@ -53,8 +53,8 @@ export function FullBleedBand({
           className={cn(
             "absolute inset-0 hidden lg:block",
             right
-              ? "bg-gradient-to-l from-ink-950/90 via-ink-950/55 to-ink-950/0"
-              : "bg-gradient-to-r from-ink-950/90 via-ink-950/55 to-ink-950/0"
+              ? "bg-gradient-to-l from-ink-950/68 via-ink-950/34 to-ink-950/0"
+              : "bg-gradient-to-r from-ink-950/68 via-ink-950/34 to-ink-950/0"
           )}
         />
         <div

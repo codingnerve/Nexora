@@ -33,11 +33,11 @@ export function Hero() {
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 hidden bg-gradient-to-r from-ink-950/90 via-ink-950/55 to-ink-950/0 lg:block"
+          className="absolute inset-0 hidden bg-gradient-to-r from-ink-950/68 via-ink-950/34 to-ink-950/0 lg:block"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-ink-950/80 to-ink-950/0 lg:block"
+          className="absolute inset-x-0 bottom-0 hidden h-2/5 bg-gradient-to-t from-ink-950/60 to-ink-950/0 lg:block"
         />
         <div
           aria-hidden="true"

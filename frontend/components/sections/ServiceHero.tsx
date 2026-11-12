@@ -127,7 +127,7 @@ export function ServiceHero({
             {/* Image overlay — the one place a gradient is allowed. */}
             <div
               aria-hidden="true"
-              className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950/85 via-ink-950/55 to-ink-950/10"
+              className="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950/64 via-ink-950/34 to-ink-950/10"
             />
 
             <div className="flex min-h-[clamp(28rem,62vh,36rem)] flex-col justify-end px-6 pb-10 pt-24 sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">
