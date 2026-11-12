@@ -37,11 +37,35 @@ const readEnv = (value: string | undefined): string => {
   return trimmed;
 };
 
+/**
+ * Registered office, as separate lines (for the footer and policy pages) and a
+ * Google Maps link. `CONTACT.address` below is the single-line form.
+ */
+export const ADDRESS_LINES = [
+  "1401 21ST ST",
+  "STE R",
+  "SACRAMENTO, CA 95811",
+] as const;
+
+export const ADDRESS_STRUCTURED = {
+  streetAddress: "1401 21st St, Ste R",
+  addressLocality: "Sacramento",
+  addressRegion: "CA",
+  postalCode: "95811",
+  addressCountry: "US",
+} as const;
+
+export const ADDRESS_MAP_HREF = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  ADDRESS_LINES.join(", ")
+)}`;
+
 export const CONTACT = {
-  /** Display form, e.g. "(888) 673-5008". */
-  tollFree: readEnv(process.env.NEXT_PUBLIC_TOLL_FREE_NUMBER) || "(888) 673-5008",
+  /** Display form, e.g. "888-383-9487". */
+  tollFree: readEnv(process.env.NEXT_PUBLIC_TOLL_FREE_NUMBER) || "888-383-9487",
   email: readEnv(process.env.NEXT_PUBLIC_CONTACT_EMAIL) || "support@nexoradestinations.com",
-  address: readEnv(process.env.NEXT_PUBLIC_COMPANY_ADDRESS),
+  /** Single line, e.g. "1401 21ST ST, STE R, SACRAMENTO, CA 95811". */
+  address:
+    readEnv(process.env.NEXT_PUBLIC_COMPANY_ADDRESS) || ADDRESS_LINES.join(", "),
   hours: readEnv(process.env.NEXT_PUBLIC_SUPPORT_HOURS),
   /** International format with country code, e.g. "+971 50 123 4567". */
   whatsapp: readEnv(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER),

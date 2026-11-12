@@ -1,9 +1,11 @@
-import { Mail, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 
 import { Wordmark } from "@/components/shared/Wordmark";
 import { Container } from "@/components/ui/Container";
 import {
+  ADDRESS_LINES,
+  ADDRESS_MAP_HREF,
   CONTACT,
   DISCLOSURE,
   FOOTER_NAV,
@@ -152,6 +154,36 @@ export function Footer() {
                       <span className="nx-figures font-medium text-ink-900 transition-colors group-hover:text-clay-700">
                         {supportPhone}
                       </span>
+                    </span>
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    href={ADDRESS_MAP_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-start gap-3 text-body-sm text-stone-600 transition-colors duration-200 hover:text-ink-900"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[8px] border border-clay-500/25 bg-clay-500/10 text-clay-700 transition-colors group-hover:border-clay-500/40 group-hover:bg-clay-500/15"
+                    >
+                      <MapPin className="size-4" strokeWidth={1.75} />
+                    </span>
+                    <span className="flex flex-col">
+                      <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-stone-500">
+                        Address
+                      </span>
+                      <address className="font-medium not-italic text-ink-900 transition-colors group-hover:text-clay-700">
+                        {CONTACT.address === ADDRESS_LINES.join(", ")
+                          ? ADDRESS_LINES.map((line) => (
+                              <span key={line} className="block">
+                                {line}
+                              </span>
+                            ))
+                          : CONTACT.address}
+                      </address>
                     </span>
                   </a>
                 </li>

@@ -1,4 +1,4 @@
-import { CONTACT, SITE } from "@/lib/constants";
+import { ADDRESS_LINES, ADDRESS_STRUCTURED, CONTACT, SITE } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/seo";
 
 /**
@@ -35,7 +35,12 @@ export function organizationSchema(): JsonLd {
           },
         }
       : {}),
-    ...(CONTACT.address ? { address: CONTACT.address } : {}),
+    // Structured parts describe the built-in address; if the address was
+    // overridden by env, fall back to the plain string so the two never differ.
+    address:
+      CONTACT.address === ADDRESS_LINES.join(", ")
+        ? { "@type": "PostalAddress", ...ADDRESS_STRUCTURED }
+        : CONTACT.address,
   };
 }
 

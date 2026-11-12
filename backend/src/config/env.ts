@@ -52,7 +52,7 @@ const envSchema = z.object({
 
   /* --- Where new inquiries are sent ------------------------------------- */
   AGENT_EMAIL: z.email("AGENT_EMAIL must be a valid email").optional(),
-  AGENT_PHONE_NUMBER: z.string().trim().default("(888) 673-5008"),
+  AGENT_PHONE_NUMBER: z.string().trim().default("888-383-9487"),
 
   /** Set to "false" to skip sending email entirely (useful in tests). */
   EMAIL_ENABLED: z

@@ -137,7 +137,7 @@ Both apps ship a committed `.env.example` containing placeholders only. Real
 | `NEXT_PUBLIC_TOLL_FREE_NUMBER` | no | Display format, e.g. `1800 123 4567` |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | no | With country code, e.g. `+971 50 123 4567`. Shows the floating WhatsApp button on phones |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | no | Public enquiries mailbox |
-| `NEXT_PUBLIC_COMPANY_ADDRESS` | no | Registered office, single line |
+| `NEXT_PUBLIC_COMPANY_ADDRESS` | no | Registered office, single line. Defaults to 1401 21ST ST, STE R, SACRAMENTO, CA 95811 |
 | `NEXT_PUBLIC_SUPPORT_HOURS` | no | Shown beside the phone number |
 | `NEXT_PUBLIC_DEFAULT_COUNTRY` | no | ISO code preselected in the phone field, e.g. `IN` |
 | `NEXT_PUBLIC_ENABLE_DESIGN_SYSTEM` | no | `true` exposes `/design-system` in production builds. Leave unset |

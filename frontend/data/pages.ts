@@ -1,4 +1,5 @@
 import type { ContentBlock } from "@/components/sections/ContentPage";
+import { CONTACT } from "@/lib/constants";
 
 /**
  * Copy for About, FAQ and the policy pages.
@@ -186,6 +187,7 @@ export const BOOKING_POLICY_BLOCKS: readonly ContentBlock[] = [
       "For assistance with your booking or any questions regarding our policies, please contact our customer support team:",
       "Email: support@nexoradestinations.com",
       "Phone: Available via our Contact page",
+      `Address: ${CONTACT.address}`,
     ],
   },
 ];
@@ -263,6 +265,7 @@ export const CANCELLATION_BLOCKS: readonly ContentBlock[] = [
     paragraphs: [
       "To request a cancellation or refund, please contact our customer support team:",
       "Email: support@nexoradestinations.com (or via our Contact page)",
+      `Address: ${CONTACT.address}`,
       "Please provide your booking/reference number, customer name, and reason for the request where applicable.",
     ],
   },
@@ -359,6 +362,7 @@ export const PRIVACY_BLOCKS: readonly ContentBlock[] = [
     heading: "10. Contact",
     paragraphs: [
       "Nexora Destinations",
+      `Address: ${CONTACT.address}`,
       "Email: support@nexoradestinations.com",
       "For telephone inquiries and company correspondence, please visit our Contact page.",
     ],
@@ -416,6 +420,7 @@ export const TERMS_BLOCKS: readonly ContentBlock[] = [
     heading: "8. Contact & Support",
     paragraphs: [
       "For any inquiries regarding these Terms & Conditions, please reach out to our team at support@nexoradestinations.com or through our Contact page.",
+      `Address: ${CONTACT.address}`,
     ],
   },
 ];
