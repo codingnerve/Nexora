@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, Phone } from "lucide-react";
 import { useState } from "react";
 
 import { MobileNav } from "@/components/navigation/MobileNav";
@@ -9,7 +9,12 @@ import { Wordmark } from "@/components/shared/Wordmark";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { useScrolled } from "@/hooks/useScrolled";
-import { PRIMARY_NAV } from "@/lib/constants";
+import {
+  CONTACT,
+  IS_TOLL_FREE_CONFIGURED,
+  PRIMARY_NAV,
+  toTelHref,
+} from "@/lib/constants";
 import { cn } from "@/utils/cn";
 
 /**
@@ -48,6 +53,26 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Always visible, including on phones, so there is a dial button
+                with the number on the first screen. */}
+            {IS_TOLL_FREE_CONFIGURED ? (
+              <ButtonLink
+                href={toTelHref(CONTACT.tollFree)}
+                variant="primary"
+                size="sm"
+                iconLeft={<Phone />}
+                aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+                className="nx-figures px-3 text-[0.8125rem] sm:px-4 sm:text-[0.875rem] [&_svg]:text-clay-400"
+              >
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="hidden text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-white/70 lg:block">
+                    Customer Care
+                  </span>
+                  <span>{CONTACT.tollFree}</span>
+                </span>
+              </ButtonLink>
+            ) : null}
+
             <ButtonLink
               href="/#plan-your-trip"
               variant="accent"

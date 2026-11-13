@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { TopBar } from "@/components/layout/TopBar";
 import { EnquiryBand } from "@/components/sections/EnquiryBand";
 import {
   MobileCallBar,
@@ -37,6 +38,7 @@ export function PageShell({
         Skip to content
       </a>
 
+      <TopBar />
       <Header />
 
       <main id="main">
