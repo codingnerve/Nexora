@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import Script from "next/script";
 
 import { MotionProvider } from "@/components/shared/MotionProvider";
 import { SITE } from "@/lib/constants";
@@ -71,6 +72,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={manrope.variable}
     >
       <body className="min-h-dvh overflow-x-hidden bg-background text-foreground">
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18584558315"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-18584558315');
+          `}
+        </Script>
         {/* Scroll-reveal content starts hidden and is shown by JavaScript. If
             scripts never run, show it anyway rather than leave a blank page. */}
         <noscript>
