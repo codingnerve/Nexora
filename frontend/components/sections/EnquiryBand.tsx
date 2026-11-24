@@ -13,7 +13,15 @@ import { CONTACT, IS_TOLL_FREE_CONFIGURED, toTelHref } from "@/lib/constants";
  * to the same general-enquiry endpoint, then sends the visitor to /thank-you,
  * which leads with a call prompt for these submissions.
  */
-export function EnquiryBand() {
+export function EnquiryBand({
+  phone,
+  line,
+}: {
+  phone?: string;
+  /** Tells the thank-you page which phone line to offer. */
+  line?: "flights";
+} = {}) {
+  const dial = phone ?? CONTACT.tollFree;
   return (
     <Section id="enquiry" tone="muted" space="md" className="scroll-mt-24">
       <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
@@ -27,8 +35,8 @@ export function EnquiryBand() {
 
           {IS_TOLL_FREE_CONFIGURED ? (
             <a
-              href={toTelHref(CONTACT.tollFree)}
-              aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+              href={toTelHref(dial)}
+              aria-label={`Call toll-free: ${dial}`}
               className="group mt-8 inline-flex items-center gap-3"
             >
               <span
@@ -42,7 +50,7 @@ export function EnquiryBand() {
                   Prefer to talk?
                 </span>
                 <span className="nx-figures block text-[1.1875rem] font-bold tracking-[-0.01em] text-ink-900 transition-colors duration-200 group-hover:text-clay-700">
-                  {CONTACT.tollFree}
+                  {dial}
                 </span>
               </span>
             </a>
@@ -51,7 +59,7 @@ export function EnquiryBand() {
 
         <div className={`lg:col-span-7 ${PANEL_SURFACE}`}>
           <div className="p-5 sm:p-7 lg:p-8">
-            <ContactForm condensed offerCall />
+            <ContactForm condensed offerCall line={line} />
           </div>
         </div>
       </div>

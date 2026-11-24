@@ -20,7 +20,11 @@ import { cn } from "@/utils/cn";
  * Pages that end in a form must render `<MobileCallBarSpacer />` so the bar
  * cannot sit on top of a submit button.
  */
-export function MobileCallBar() {
+export function MobileCallBar({
+  phone,
+  label = "Call Toll-Free",
+}: { phone?: string; label?: string } = {}) {
+  const dial = phone ?? CONTACT.tollFree;
   const visible = useScrolled(560);
 
   // With no number configured there is nothing to dial, so show nothing —
@@ -42,8 +46,8 @@ export function MobileCallBar() {
           )}
         >
           <a
-            href={toTelHref(CONTACT.tollFree)}
-            aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+            href={toTelHref(dial)}
+            aria-label={`${label}: ${dial}`}
             className={cn(
               "flex h-12 w-full items-center justify-center gap-2 rounded-[10px]",
               "bg-ink-900 px-5 text-[0.9375rem] font-semibold text-white",
@@ -51,8 +55,8 @@ export function MobileCallBar() {
             )}
           >
             <Phone aria-hidden="true" className="size-4 text-clay-400" strokeWidth={2} />
-            Call Toll-Free
-            <span className="nx-figures font-medium text-white/70">{CONTACT.tollFree}</span>
+            {label}
+            <span className="nx-figures font-medium text-white/70">{dial}</span>
           </a>
         </motion.div>
       ) : null}

@@ -16,6 +16,7 @@ import { Reveal } from "@/components/shared/Reveal";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FLIGHT_AREAS, FLIGHT_FAQS, FLIGHT_JOURNEY, FLIGHT_TIPS } from "@/data/servicePages";
+import { CONTACT } from "@/lib/constants";
 import { FLIGHT_PHOTOS } from "@/lib/images";
 import { buildMetadata } from "@/lib/seo";
 
@@ -34,6 +35,7 @@ export const metadata: Metadata = buildMetadata({
     "Share your route, dates and cabin preference, and Nexora Destinations' travel specialists will help you work through domestic and international flight options. No online payment.",
   path: "/flights",
   image: FLIGHT_PHOTOS.takeoff.src,
+  languages: { "en-US": "/flights", "es-US": "/es/vuelos", "x-default": "/flights" },
 });
 
 const AREA_ICONS = [MapPin, Globe2, Repeat, MoveRight] as const;
@@ -47,9 +49,10 @@ const ROUTE_IDEAS = [
 
 export default function FlightsPage() {
   return (
-    <PageShell>
+    <PageShell line="flights">
       <ServiceHero
         layout="overlay"
+        phone={CONTACT.flights}
         eyebrow="Flights"
         title="Flight planning, without the guesswork."
         lede="Share your route, dates and preferences and our travel specialists will help you work through the available options."
@@ -65,7 +68,7 @@ export default function FlightsPage() {
             title="Tell us about your flight."
             lede="Two short steps: your trip, then how to reach you. A specialist will come back to you with options — nothing is booked or charged."
           >
-            <FlightForm extended />
+            <FlightForm extended phone={CONTACT.flights} />
           </InquiryCard>
         </Reveal>
       </Section>
@@ -184,6 +187,7 @@ export default function FlightsPage() {
         lede="Send your route and dates, and a specialist will come back to you with options."
         ctaLabel="Request Flight Options"
         image={FLIGHT_PHOTOS.gateDusk}
+        phone={CONTACT.flights}
       />
     </PageShell>
   );

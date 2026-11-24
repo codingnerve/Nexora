@@ -20,12 +20,16 @@ export function CallToBook({
   variant = "inline",
   onDark = false,
   className,
+  phone,
 }: {
   variant?: CallVariant;
   onDark?: boolean;
   className?: string;
+  /** Overrides the site-wide number, e.g. the dedicated flights line. */
+  phone?: string;
 }) {
-  const href = IS_TOLL_FREE_CONFIGURED ? toTelHref(CONTACT.tollFree) : "/contact";
+  const dial = phone ?? CONTACT.tollFree;
+  const href = IS_TOLL_FREE_CONFIGURED ? toTelHref(dial) : "/contact";
 
   /* --- Header / toolbar: one compact control --------------------------- */
   if (variant === "inline") {
@@ -82,7 +86,7 @@ export function CallToBook({
               onDark ? "text-canvas-100" : "text-ink-900"
             )}
           >
-            {CONTACT.tollFree}
+            {dial}
           </span>
         </span>
       </a>
@@ -104,7 +108,7 @@ export function CallToBook({
         )}
       >
         <Phone aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.75} />
-        {IS_TOLL_FREE_CONFIGURED ? CONTACT.tollFree : "Contact us"}
+        {IS_TOLL_FREE_CONFIGURED ? dial : "Contact us"}
       </a>
     );
   }
@@ -133,7 +137,7 @@ export function CallToBook({
                 : "text-ink-900 hover:text-clay-700"
             )}
           >
-            {CONTACT.tollFree}
+            {dial}
           </a>
         ) : (
           <p
@@ -235,7 +239,7 @@ export function CallToBook({
         fullWidthOnMobile
         iconLeft={<Phone strokeWidth={1.75} />}
       >
-        {IS_TOLL_FREE_CONFIGURED ? CONTACT.tollFree : "Contact us"}
+        {IS_TOLL_FREE_CONFIGURED ? dial : "Contact us"}
       </ButtonLink>
     </div>
   );

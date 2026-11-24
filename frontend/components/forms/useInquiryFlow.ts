@@ -55,6 +55,14 @@ interface FlowOptions<V extends ContactValues> {
    * (and the `react-hooks/refs` lint rule) correctly rejects.
    */
   scrollToPanel?: () => void;
+  /** Route shown after a successful submit. Defaults to the English page. */
+  thankYouPath?: string;
+  /**
+   * Replaces the backend's English error text when the form is shown in another
+   * language. Must be a stable (module-level) object. `field` is used for every
+   * per-field problem the backend reports.
+   */
+  errorMessages?: { generic: string; field: string };
 }
 
 /**
@@ -73,6 +81,8 @@ export function useInquiryFlow<V extends ContactValues>({
   validateContact,
   buildPayload,
   scrollToPanel,
+  thankYouPath = "/thank-you",
+  errorMessages,
 }: FlowOptions<V>) {
   const [values, setValues] = useState<V>(initialValues);
   const [step, setStep] = useState<1 | 2>(1);
@@ -156,15 +166,20 @@ export function useInquiryFlow<V extends ContactValues>({
       // The reference is the only thing that travels in the URL — never the
       // customer name, email, phone or travel details.
       router.push(
-        `/thank-you?inquiry=${encodeURIComponent(created.inquiryId)}`
+        `${thankYouPath}?inquiry=${encodeURIComponent(created.inquiryId)}`
       );
     } catch (error) {
       if (error instanceof ApiError) {
-        setMessage(error.message);
+        setMessage(errorMessages?.generic ?? error.message);
         // Surface any per-field problems the backend reported, on the step
         // where those fields actually live.
         if (error.isValidationError) {
-          const fieldErrors = mapApiFieldErrors(error.fieldErrors);
+          const reported = mapApiFieldErrors(error.fieldErrors);
+          const fieldErrors = errorMessages
+            ? Object.fromEntries(
+                Object.keys(reported).map((key) => [key, errorMessages.field])
+              )
+            : reported;
           setErrors(fieldErrors);
           const onlyContactFields = Object.keys(fieldErrors).every((key) =>
             CONTACT_FIELDS.has(key)
@@ -173,14 +188,23 @@ export function useInquiryFlow<V extends ContactValues>({
           focusFirstInvalid();
         }
       } else {
-        setMessage(GENERIC_ERROR_MESSAGE);
+        setMessage(errorMessages?.generic ?? GENERIC_ERROR_MESSAGE);
       }
       setStatus("error");
       focusPanel();
     } finally {
       inFlight.current = false;
     }
-  }, [values, validateContact, buildPayload, service, focusPanel, router]);
+  }, [
+    values,
+    validateContact,
+    buildPayload,
+    service,
+    focusPanel,
+    router,
+    thankYouPath,
+    errorMessages,
+  ]);
 
   const reset = useCallback(() => {
     setValues(initialValues);

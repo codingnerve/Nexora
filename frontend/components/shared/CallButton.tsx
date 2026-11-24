@@ -13,23 +13,28 @@ export function CallButton({
   size = "lg",
   fullWidthOnMobile = true,
   className,
+  phone,
 }: {
+  /** Overrides the site-wide number, e.g. the dedicated flights line. */
+  phone?: string;
   onDark?: boolean;
   size?: ButtonSize;
   fullWidthOnMobile?: boolean;
   className?: string;
 }) {
+  const dial = phone ?? CONTACT.tollFree;
+
   if (IS_TOLL_FREE_CONFIGURED) {
     return (
       <ButtonLink
-        href={toTelHref(CONTACT.tollFree)}
+        href={toTelHref(dial)}
         variant={onDark ? "secondary" : "phone"}
         size={size}
         onDark={onDark}
         iconLeft={<Phone />}
         fullWidthOnMobile={fullWidthOnMobile}
         className={className}
-        aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+        aria-label={`Call toll-free: ${dial}`}
       >
         Call Toll-Free
       </ButtonLink>

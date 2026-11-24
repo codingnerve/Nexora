@@ -19,13 +19,40 @@ import { cn } from "@/utils/cn";
  * Step indicator
  * ------------------------------------------------------------------------- */
 
-function StepLine({ step }: { step: 1 | 2 }) {
+/** Fixed text in the form chrome. Defaults to English; pass another set to translate. */
+export interface FormLabels {
+  step: (step: number) => string;
+  tripDetails: string;
+  yourDetails: string;
+  continue: string;
+  back: string;
+  sending: string;
+  disclosure: string;
+  callPrefix: string;
+  received: string;
+  redirecting: string;
+}
+
+export const EN_FORM_LABELS: FormLabels = {
+  step: (step) => `Step ${step} of 2`,
+  tripDetails: "Trip details",
+  yourDetails: "Your details",
+  continue: "Continue",
+  back: "Back",
+  sending: "Sending your request…",
+  disclosure: DISCLOSURE.short,
+  callPrefix: "You can also call us on",
+  received: "received.",
+  redirecting: "Taking you to your confirmation…",
+};
+
+function StepLine({ step, labels }: { step: 1 | 2; labels: FormLabels }) {
   return (
     <div className="flex items-center gap-3">
       <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-stone-600">
-        Step {step} of 2
+        {labels.step(step)}
         <span className="ml-2 font-medium normal-case tracking-normal text-stone-500">
-          {step === 1 ? "Trip details" : "Your details"}
+          {step === 1 ? labels.tripDetails : labels.yourDetails}
         </span>
       </p>
 
@@ -51,7 +78,13 @@ function StepLine({ step }: { step: 1 | 2 }) {
  * reaching /thank-you, so the form does not flash back into view. The real
  * confirmation, with the reference, lives on the thank-you page.
  */
-export function SuccessPanel({ serviceLabel }: { serviceLabel: string }) {
+export function SuccessPanel({
+  serviceLabel,
+  labels = EN_FORM_LABELS,
+}: {
+  serviceLabel: string;
+  labels?: FormLabels;
+}) {
   return (
     <div className="flex items-start gap-3 py-6" role="status" aria-live="polite">
       <span
@@ -62,10 +95,10 @@ export function SuccessPanel({ serviceLabel }: { serviceLabel: string }) {
       </span>
       <div>
         <p className="text-body-md font-semibold text-ink-900">
-          {serviceLabel} received.
+          {serviceLabel} {labels.received}
         </p>
         <p className="mt-1 text-body-sm text-foreground-muted">
-          Taking you to your confirmation&hellip;
+          {labels.redirecting}
         </p>
       </div>
     </div>
@@ -76,7 +109,16 @@ export function SuccessPanel({ serviceLabel }: { serviceLabel: string }) {
  * Error banner
  * ------------------------------------------------------------------------- */
 
-export function ErrorBanner({ message }: { message: string }) {
+export function ErrorBanner({
+  message,
+  phone,
+  labels = EN_FORM_LABELS,
+}: {
+  message: string;
+  phone?: string;
+  labels?: FormLabels;
+}) {
+  const dial = phone ?? CONTACT.tollFree;
   return (
     <div
       role="alert"
@@ -90,12 +132,12 @@ export function ErrorBanner({ message }: { message: string }) {
         <p>{message}</p>
         {IS_TOLL_FREE_CONFIGURED ? (
           <p className="mt-1 text-caption text-stone-600">
-            You can also call us on{" "}
+            {labels.callPrefix}{" "}
             <a
-              href={toTelHref(CONTACT.tollFree)}
+              href={toTelHref(dial)}
               className="nx-figures font-semibold text-clay-700 underline underline-offset-4"
             >
-              {CONTACT.tollFree}
+              {dial}
             </a>
             .
           </p>
@@ -119,7 +161,12 @@ export function FormShell({
   onBack,
   onSubmit,
   children,
+  phone,
+  labels = EN_FORM_LABELS,
 }: {
+  /** Number offered in the error banner. Defaults to the site-wide line. */
+  phone?: string;
+  labels?: FormLabels;
   step: 1 | 2;
   status: string;
   message: string;
@@ -139,11 +186,11 @@ export function FormShell({
         else onSubmit();
       }}
     >
-      <StepLine step={step} />
+      <StepLine step={step} labels={labels} />
 
       {status === "error" && message ? (
         <div className="mt-6">
-          <ErrorBanner message={message} />
+          <ErrorBanner message={message} phone={phone} labels={labels} />
         </div>
       ) : null}
 
@@ -151,7 +198,7 @@ export function FormShell({
 
       <div className="mt-7 flex flex-col gap-4 border-t border-sand-300 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="order-2 max-w-sm text-caption text-stone-500 sm:order-1">
-          {DISCLOSURE.short}
+          {labels.disclosure}
         </p>
 
         <div className="order-1 flex flex-col-reverse gap-3 sm:order-2 sm:flex-row sm:items-center">
@@ -163,20 +210,20 @@ export function FormShell({
               iconLeft={<ArrowLeft />}
               disabled={isSubmitting}
             >
-              Back
+              {labels.back}
             </Button>
           ) : null}
 
           {step === 1 ? (
             <Button type="submit" variant="primary" iconRight={<ArrowRight />} fullWidthOnMobile>
-              Continue
+              {labels.continue}
             </Button>
           ) : (
             <Button
               type="submit"
               variant="accent"
               loading={isSubmitting}
-              loadingLabel="Sending your request…"
+              loadingLabel={labels.sending}
               iconRight={isSubmitting ? undefined : <Send />}
               fullWidthOnMobile
             >

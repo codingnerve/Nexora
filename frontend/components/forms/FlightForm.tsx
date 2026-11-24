@@ -67,7 +67,13 @@ export function FlightForm({
       the compact homepage panel too long. */
   extended = false,
   defaults,
-}: { extended?: boolean; defaults?: FlightDefaults } = {}) {
+  phone,
+}: {
+  extended?: boolean;
+  defaults?: FlightDefaults;
+  /** Number offered if sending fails. Defaults to the site-wide line. */
+  phone?: string;
+} = {}) {
   // Held in state so the object keeps one identity across renders — the flow
   // hook resets to it after a submission.
   const [initialValues] = useState<FlightValues>(() => ({ ...INITIAL, ...defaults }));
@@ -144,6 +150,7 @@ export function FlightForm({
         step={flow.step}
         status={flow.status}
         message={flow.message}
+        phone={phone}
         submitLabel="Request Flight Options"
         isSubmitting={flow.isSubmitting}
         onContinue={flow.goToContact}

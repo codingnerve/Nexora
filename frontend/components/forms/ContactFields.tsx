@@ -7,6 +7,30 @@ import { MAX_LENGTH, type FieldErrors } from "@/lib/validation";
 import type { ContactValues } from "./useInquiryFlow";
 import { FieldFull, FieldGrid } from "./FormShell";
 
+/** Visible text for the shared contact fields. Defaults to English. */
+export interface ContactCopy {
+  name: string;
+  namePlaceholder: string;
+  email: string;
+  phone: string;
+  phoneHelper: string;
+  phonePlaceholder?: string;
+  phoneCodeLabel?: string;
+  phoneCodePlaceholder?: string;
+  /** Language tag for country names in the dialling-code picker. */
+  locale?: string;
+  honeypot: string;
+}
+
+const EN_CONTACT_COPY: ContactCopy = {
+  name: "Full name",
+  namePlaceholder: "Who should we ask for?",
+  email: "Email",
+  phone: "Phone",
+  phoneHelper: "Include your country code so we can reach you.",
+  honeypot: "Company website",
+};
+
 /**
  * Step 2 of every inquiry form: who you are and how to reach you.
  *
@@ -20,7 +44,9 @@ export function ContactFields({
   setField,
   messageLabel,
   messagePlaceholder,
+  copy = EN_CONTACT_COPY,
 }: {
+  copy?: ContactCopy;
   values: ContactValues;
   errors: FieldErrors;
   setField: (key: keyof ContactValues, value: string) => void;
@@ -30,18 +56,18 @@ export function ContactFields({
   return (
     <FieldGrid>
       <Input
-        label="Full name"
+        label={copy.name}
         required
         autoComplete="name"
         maxLength={MAX_LENGTH.name}
-        placeholder="Who should we ask for?"
+        placeholder={copy.namePlaceholder}
         value={values.name}
         error={errors.name}
         onChange={(event) => setField("name", event.target.value)}
       />
 
       <Input
-        label="Email"
+        label={copy.email}
         type="email"
         required
         autoComplete="email"
@@ -54,9 +80,13 @@ export function ContactFields({
       />
 
       <PhoneInput
-        label="Phone"
+        label={copy.phone}
         required
-        helper="Include your country code so we can reach you."
+        helper={copy.phoneHelper}
+        placeholder={copy.phonePlaceholder}
+        codeLabel={copy.phoneCodeLabel}
+        codePlaceholder={copy.phoneCodePlaceholder}
+        locale={copy.locale}
         error={errors.phone}
         onChange={(combined) => setField("phone", combined)}
       />
@@ -64,7 +94,7 @@ export function ContactFields({
       {/* Honeypot: hidden from people, tempting to bots. Never announced to
           assistive tech, and excluded from the tab order. */}
       <div aria-hidden="true" className="hidden">
-        <label htmlFor={HONEYPOT_FIELD}>Company website</label>
+        <label htmlFor={HONEYPOT_FIELD}>{copy.honeypot}</label>
         <input
           id={HONEYPOT_FIELD}
           name={HONEYPOT_FIELD}

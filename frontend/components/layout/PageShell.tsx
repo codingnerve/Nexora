@@ -9,6 +9,7 @@ import {
   MobileCallBarSpacer,
 } from "@/components/shared/MobileCallBar";
 import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
+import { CONTACT } from "@/lib/constants";
 
 /**
  * The chrome every public page shares: skip link, header, main landmark,
@@ -21,6 +22,7 @@ import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 export function PageShell({
   children,
   enquiry = true,
+  line,
 }: {
   children: ReactNode;
   /**
@@ -28,7 +30,13 @@ export function PageShell({
    * a confirmation after one, turn it off.
    */
   enquiry?: boolean;
+  /**
+   * Show the dedicated flights phone line in the top bar, header, footer, call
+   * bar and enquiry band, instead of the site-wide number.
+   */
+  line?: "flights";
 }) {
+  const phone = line === "flights" ? CONTACT.flights : undefined;
   return (
     <>
       <a
@@ -38,17 +46,17 @@ export function PageShell({
         Skip to content
       </a>
 
-      <TopBar />
-      <Header />
+      <TopBar phone={phone} />
+      <Header phone={phone} />
 
       <main id="main">
         {children}
-        {enquiry ? <EnquiryBand /> : null}
+        {enquiry ? <EnquiryBand phone={phone} line={line} /> : null}
         <MobileCallBarSpacer />
       </main>
 
-      <Footer />
-      <MobileCallBar />
+      <Footer phone={phone} />
+      <MobileCallBar phone={phone} />
       <WhatsAppButton />
     </>
   );

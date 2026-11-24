@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }[] = [
     { path: "/", priority: 1, changeFrequency: "monthly" },
     { path: "/flights", priority: 0.9, changeFrequency: "monthly" },
+    { path: "/es/vuelos", priority: 0.8, changeFrequency: "monthly" },
     { path: "/hotels", priority: 0.9, changeFrequency: "monthly" },
     { path: "/cabs", priority: 0.9, changeFrequency: "monthly" },
     { path: "/destinations", priority: 0.8, changeFrequency: "monthly" },

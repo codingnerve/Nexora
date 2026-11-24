@@ -12,7 +12,8 @@ import { CONTACT, IS_TOLL_FREE_CONFIGURED, toTelHref } from "@/lib/constants";
  * below carries the call button there. It is a normal block, not sticky: it
  * scrolls away and the main header stays pinned on its own.
  */
-export function TopBar() {
+export function TopBar({ phone }: { phone?: string } = {}) {
+  const dial = phone ?? CONTACT.tollFree;
   const hours = CONTACT.hours;
 
   return (
@@ -42,12 +43,12 @@ export function TopBar() {
 
           {IS_TOLL_FREE_CONFIGURED ? (
             <a
-              href={toTelHref(CONTACT.tollFree)}
-              aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+              href={toTelHref(dial)}
+              aria-label={`Call toll-free: ${dial}`}
               className="nx-focus-dark nx-figures inline-flex h-7 items-center gap-2 rounded-[8px] border border-white/35 px-3 text-[0.8125rem] font-semibold text-white transition-colors duration-200 hover:border-white hover:bg-white/10"
             >
               <Phone aria-hidden="true" className="size-3.5 text-clay-400" strokeWidth={2} />
-              Call to enquire: {CONTACT.tollFree}
+              Call to enquire: {dial}
             </a>
           ) : null}
         </div>

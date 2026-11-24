@@ -53,6 +53,14 @@ export interface PhoneInputProps {
   onChange?: (combined: string, parts: { dialIso: string; number: string }) => void;
   onBlur?: () => void;
   className?: string;
+  /** Placeholder for the number field. */
+  placeholder?: string;
+  /** Accessible name for the dialling-code picker. */
+  codeLabel?: string;
+  /** Text of the empty option in the picker. */
+  codePlaceholder?: string;
+  /** BCP 47 tag (e.g. "es") used to show country names in that language. */
+  locale?: string;
 }
 
 export function PhoneInput({
@@ -66,7 +74,26 @@ export function PhoneInput({
   onChange,
   onBlur,
   className,
+  placeholder = "Your contact number",
+  codeLabel = "Country dialling code",
+  codePlaceholder = "Code",
+  locale,
 }: PhoneInputProps) {
+  const displayNames = (() => {
+    if (!locale) return null;
+    try {
+      return new Intl.DisplayNames([locale], { type: "region" });
+    } catch {
+      return null;
+    }
+  })();
+  const countryName = (country: { iso: string; name: string }): string => {
+    try {
+      return displayNames?.of(country.iso) ?? country.name;
+    } catch {
+      return country.name;
+    }
+  };
   const [dialIso, setDialIso] = useState(defaultDialIso);
   const [number, setNumber] = useState(defaultNumber);
 
@@ -127,7 +154,7 @@ export function PhoneInput({
                 onBlur={onBlur}
                 // The visible label belongs to the number field, so the picker
                 // carries its own accessible name.
-                aria-label="Country dialling code"
+                aria-label={codeLabel}
                 className={cn(
                   "nx-select nx-figures h-full w-full cursor-pointer appearance-none",
                   "overflow-hidden rounded-l-[8px] border-0 bg-transparent py-0 pl-3 pr-7",
@@ -137,12 +164,12 @@ export function PhoneInput({
                   "transition-colors duration-[180ms] focus-visible:bg-clay-500/[0.08]"
                 )}
               >
-                <option value="">Code</option>
+                <option value="">{codePlaceholder}</option>
                 {/* Six non-breaking spaces push the country name past the closed
                     control's edge, so only the dial code is visible. */}
                 {DIAL_CODES.map((country) => (
                   <option key={country.iso} value={country.iso}>
-                    {`${country.dial}${" ".repeat(6)}${country.name}`}
+                    {`${country.dial}${" ".repeat(6)}${countryName(country)}`}
                   </option>
                 ))}
               </select>
@@ -168,7 +195,7 @@ export function PhoneInput({
               aria-required={required || undefined}
               aria-invalid={invalid || undefined}
               aria-describedby={describedBy}
-              placeholder="Your contact number"
+              placeholder={placeholder}
               className={cn(
                 "nx-figures h-full min-w-0 flex-1 rounded-r-[8px] border-0",
                 "bg-transparent px-3.5 text-body-md text-ink-900",

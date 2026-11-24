@@ -65,17 +65,18 @@ function FooterColumn({
   );
 }
 
-export function Footer() {
+export function Footer({ phone }: { phone?: string } = {}) {
+  const dial = phone ?? CONTACT.tollFree;
   const year = new Date().getFullYear();
   // Contact details come only from configuration. An unset email is omitted and
   // an unset phone number becomes a link to the contact page — never a
   // placeholder a visitor might actually try to use.
   const supportEmail = CONTACT.email || "support@nexoradestinations.com";
   const supportPhone = IS_TOLL_FREE_CONFIGURED
-    ? CONTACT.tollFree
+    ? dial
     : "Send us a message";
   const phoneHref = IS_TOLL_FREE_CONFIGURED
-    ? toTelHref(CONTACT.tollFree)
+    ? toTelHref(dial)
     : "/contact";
 
   return (

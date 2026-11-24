@@ -23,7 +23,10 @@ export function FinalCTA({
   // Same-page anchor: on service pages this is their own request form.
   ctaHref = "#plan-your-trip",
   image,
+  phone,
 }: {
+  /** Overrides the site-wide number, e.g. the dedicated flights line. */
+  phone?: string;
   title?: string;
   lede?: string;
   ctaLabel?: string;
@@ -70,7 +73,7 @@ export function FinalCTA({
                 >
                   {ctaLabel}
                 </ButtonLink>
-                <CallButton onDark />
+                <CallButton onDark phone={phone} />
               </div>
               {CONTACT.hours ? (
                 <p className="mt-4 text-[0.875rem] text-white/60">{CONTACT.hours}</p>

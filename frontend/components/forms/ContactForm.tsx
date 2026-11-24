@@ -73,11 +73,14 @@ interface ContactFormProps {
    * site-wide enquiry band, whose visitors are likely to want a quick answer.
    */
   offerCall?: boolean;
+  /** Which phone line the thank-you page should offer. */
+  line?: "flights";
 }
 
 export function ContactForm({
   condensed = false,
   offerCall = false,
+  line,
 }: ContactFormProps) {
   const honeypotId = useId();
   const [values, setValues] = useState<ContactFormValues>(INITIAL);
@@ -151,7 +154,7 @@ export function ContactForm({
         router.push(
           `/thank-you?inquiry=${encodeURIComponent(created.inquiryId)}${
             offerCall ? "&call=1" : ""
-          }`
+          }${line ? `&line=${line}` : ""}`
         );
       } catch (error) {
         if (error instanceof ApiError) {
@@ -168,7 +171,7 @@ export function ContactForm({
         inFlight.current = false;
       }
     },
-    [values, router, offerCall]
+    [values, router, offerCall, line]
   );
 
   if (status === "success") {

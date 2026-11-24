@@ -30,9 +30,11 @@ const FOCUSABLE =
 export function MobileNav({
   open,
   onClose,
+  phone,
 }: {
   open: boolean;
   onClose: () => void;
+  phone?: string;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -190,7 +192,7 @@ export function MobileNav({
             <ButtonLink href={PLAN_TRIP_HREF} variant="accent" size="lg" className="w-full" onClick={onClose}>
               Plan My Trip
             </ButtonLink>
-            <CallToBook variant="compact" className="flex min-h-11 justify-center" />
+            <CallToBook variant="compact" phone={phone} className="flex min-h-11 justify-center" />
             <p className="text-center text-caption text-stone-600">{DISCLOSURE.short}</p>
           </div>
         </motion.div>

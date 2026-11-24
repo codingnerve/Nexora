@@ -54,6 +54,13 @@ async function Confirmation({
   // needs a configured number to be worth showing.
   const offerCall = params.call === "1" && IS_TOLL_FREE_CONFIGURED;
 
+  // Flight requests, and enquiries sent from the flights pages, get the
+  // dedicated flights line; everything else gets the site-wide number.
+  const dial =
+    params.line === "flights" || reference?.startsWith("NEX-FLT-")
+      ? CONTACT.flights
+      : CONTACT.tollFree;
+
   return (
     <Section tone="muted" space="lg">
       <div className="mx-auto max-w-2xl rounded-[20px] border border-sand-300 bg-white p-7 text-center shadow-panel sm:p-12">
@@ -108,15 +115,15 @@ async function Confirmation({
               Call us now and a travel specialist can help straight away.
             </p>
             <ButtonLink
-              href={toTelHref(CONTACT.tollFree)}
+              href={toTelHref(dial)}
               variant="accent"
               size="lg"
               iconLeft={<Phone />}
               fullWidthOnMobile
               className="mt-5"
-              aria-label={`Call now: ${CONTACT.tollFree}`}
+              aria-label={`Call now: ${dial}`}
             >
-              Call {CONTACT.tollFree}
+              Call {dial}
             </ButtonLink>
           </div>
         ) : null}
@@ -128,12 +135,12 @@ async function Confirmation({
 
           {IS_TOLL_FREE_CONFIGURED && !offerCall ? (
             <ButtonLink
-              href={toTelHref(CONTACT.tollFree)}
+              href={toTelHref(dial)}
               variant="phone"
               size="lg"
               iconLeft={<Phone />}
               fullWidthOnMobile
-              aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+              aria-label={`Call toll-free: ${dial}`}
             >
               Call Toll-Free
             </ButtonLink>

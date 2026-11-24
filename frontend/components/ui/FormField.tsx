@@ -3,6 +3,7 @@
 import { CircleAlert } from "lucide-react";
 import { useId, type ReactNode } from "react";
 
+import { useFormLocale } from "@/components/ui/FormLocale";
 import { cn } from "@/utils/cn";
 
 /**
@@ -42,6 +43,7 @@ export function FormField({
   className?: string;
   children: (props: FieldRenderProps) => ReactNode;
 }) {
+  const locale = useFormLocale();
   const reactId = useId();
   const id = `field-${reactId}`;
   const helperId = `${id}-helper`;
@@ -65,13 +67,13 @@ export function FormField({
               <span aria-hidden="true" className="ml-0.5 text-clay-700">
                 *
               </span>
-              <span className="sr-only"> (required)</span>
+              <span className="sr-only"> {locale.required}</span>
             </>
           ) : null}
         </label>
 
         {!required && optionalLabel ? (
-          <span className="shrink-0 text-caption text-stone-500">Optional</span>
+          <span className="shrink-0 text-caption text-stone-500">{locale.optional}</span>
         ) : null}
       </div>
 

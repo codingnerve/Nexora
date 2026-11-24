@@ -15,7 +15,13 @@ export function buildMetadata({
   path,
   image,
   noIndex = false,
+  locale = "en_US",
+  languages,
 }: {
+  /** Open Graph locale, e.g. "es_US". Defaults to English. */
+  locale?: string;
+  /** hreflang alternates, e.g. { "es-US": "/es/vuelos", "en-US": "/flights" }. */
+  languages?: Record<string, string>;
   /** Page title without the brand; the root layout template appends it. */
   title: string;
   description: string;
@@ -34,14 +40,14 @@ export function buildMetadata({
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, ...(languages ? { languages } : {}) },
     openGraph: {
       type: "website",
       siteName: SITE.name,
       title: socialTitle,
       description,
       url: canonical,
-      locale: "en_US",
+      locale,
       ...(image ? { images: [{ url: image, alt: title }] } : {}),
     },
     twitter: {

@@ -67,6 +67,20 @@ export const CONTACT = {
   address:
     readEnv(process.env.NEXT_PUBLIC_COMPANY_ADDRESS) || ADDRESS_LINES.join(", "),
   hours: readEnv(process.env.NEXT_PUBLIC_SUPPORT_HOURS),
+  /**
+   * Dedicated line for the flight pages (/flights and /es/vuelos), so calls
+   * from those pages can be told apart. Override with NEXT_PUBLIC_FLIGHTS_PHONE.
+   */
+  flights: readEnv(process.env.NEXT_PUBLIC_FLIGHTS_PHONE) || "+1 (915) 255-1230",
+  /**
+   * Dedicated Spanish assistance line (used across Spanish pages under /es/).
+   * Override with NEXT_PUBLIC_SPANISH_PHONE.
+   */
+  spanish:
+    (readEnv(process.env.NEXT_PUBLIC_SPANISH_PHONE) || "888-898-4591").replace(
+      /\./g,
+      "-"
+    ),
   /** International format with country code, e.g. "+971 50 123 4567". */
   whatsapp: readEnv(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER),
 } as const;

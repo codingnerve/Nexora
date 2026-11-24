@@ -43,20 +43,23 @@ interface ServiceHeroProps {
   highlightsTitle?: string;
   highlights?: readonly string[];
   children?: ReactNode;
+  /** Overrides the site-wide number, e.g. the dedicated flights line. */
+  phone?: string;
 }
 
 /** Call action shared by all three layouts. */
-function CallAction({ onDark }: { onDark: boolean }) {
+function CallAction({ onDark, phone }: { onDark: boolean; phone?: string }) {
+  const dial = phone ?? CONTACT.tollFree;
   if (IS_TOLL_FREE_CONFIGURED) {
     return (
       <ButtonLink
-        href={toTelHref(CONTACT.tollFree)}
+        href={toTelHref(dial)}
         variant={onDark ? "secondary" : "phone"}
         size="lg"
         onDark={onDark}
         iconLeft={<Phone />}
         fullWidthOnMobile
-        aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+        aria-label={`Call toll-free: ${dial}`}
       >
         Call Toll-Free
       </ButtonLink>
@@ -91,6 +94,7 @@ export function ServiceHero({
   highlightsTitle = "Matched to your trip",
   highlights,
   children,
+  phone,
 }: ServiceHeroProps) {
   const actions = (onDark: boolean) => (
     <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
@@ -104,7 +108,7 @@ export function ServiceHero({
       >
         {ctaLabel}
       </ButtonLink>
-      <CallAction onDark={onDark} />
+      <CallAction onDark={onDark} phone={phone} />
     </div>
   );
 

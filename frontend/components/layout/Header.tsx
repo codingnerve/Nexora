@@ -24,7 +24,8 @@ import { cn } from "@/utils/cn";
  * navigation sits in the centre, with the primary "Plan My Trip" action on
  * the right. On scroll it tightens slightly and gains a soft shadow.
  */
-export function Header() {
+export function Header({ phone }: { phone?: string } = {}) {
+  const dial = phone ?? CONTACT.tollFree;
   const [menuOpen, setMenuOpen] = useState(false);
   const scrolled = useScrolled(12);
 
@@ -57,18 +58,18 @@ export function Header() {
                 with the number on the first screen. */}
             {IS_TOLL_FREE_CONFIGURED ? (
               <ButtonLink
-                href={toTelHref(CONTACT.tollFree)}
+                href={toTelHref(dial)}
                 variant="primary"
                 size="sm"
                 iconLeft={<Phone />}
-                aria-label={`Call toll-free: ${CONTACT.tollFree}`}
+                aria-label={`Call toll-free: ${dial}`}
                 className="nx-figures px-3 text-[0.8125rem] sm:px-4 sm:text-[0.875rem] [&_svg]:text-clay-400"
               >
                 <span className="flex flex-col items-start leading-tight">
                   <span className="hidden text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-white/70 lg:block">
                     Customer Care
                   </span>
-                  <span>{CONTACT.tollFree}</span>
+                  <span>{dial}</span>
                 </span>
               </ButtonLink>
             ) : null}
@@ -99,7 +100,7 @@ export function Header() {
         </Container>
       </header>
 
-      <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <MobileNav open={menuOpen} onClose={() => setMenuOpen(false)} phone={dial} />
     </>
   );
 }
