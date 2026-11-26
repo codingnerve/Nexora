@@ -69,9 +69,9 @@ export const CONTACT = {
   hours: readEnv(process.env.NEXT_PUBLIC_SUPPORT_HOURS),
   /**
    * Dedicated line for the flight pages (/flights and /es/vuelos), so calls
-   * from those pages can be told apart. Override with NEXT_PUBLIC_FLIGHTS_PHONE.
+   * from those pages can be told apart.
    */
-  flights: readEnv(process.env.NEXT_PUBLIC_FLIGHTS_PHONE) || "+1 (915) 255-1230",
+  flights: "888-383-9487",
   /**
    * Dedicated Spanish assistance line (used across Spanish pages under /es/).
    * Override with NEXT_PUBLIC_SPANISH_PHONE.
